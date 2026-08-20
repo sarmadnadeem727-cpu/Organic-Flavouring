@@ -852,7 +852,7 @@
   <!-- ========== LIVE EXCEL SHEET BACKGROUND ========== -->
   <div class="excel-background-container" id="excelBg">
     <div class="excel-light-overlay"></div>
-    <iframe src="https://docs.google.com/spreadsheets/d/1aGbWL4mhFAvyZevfpKfP3fGCz1D0NQgKDGupHj-tgDA/edit" id="excelIframe"></iframe>
+    <iframe src="https://docs.google.com/spreadsheets/d/1LJX3W405oTxyRluiBnQ0y8AHGCaoLCf8/edit?usp=sharing&ouid=107029091635489631391&rtpof=true&sd=true" id="excelIframe"></iframe>
   </div>
 
   <!-- ========== FIXED CONTAINER NAVIGATION ========== -->
@@ -1258,7 +1258,7 @@
        CONFIG & GLOBAL STATE
        ========================================================================== */
     // Using Visualization Query API endpoint to completely bypass Google Sheets CDN cache
-    const GOOGLE_SHEETS_CSV_URL = "https://docs.google.com/spreadsheets/d/1aGbWL4mhFAvyZevfpKfP3fGCz1D0NQgKDGupHj-tgDA/gviz/tq?tqx=out:csv";
+    const GOOGLE_SHEETS_CSV_URL = "https://docs.google.com/spreadsheets/d/1LJX3W405oTxyRluiBnQ0y8AHGCaoLCf8/gviz/tq?tqx=out:csv";
 
     // 75-row fallback CSV dataset representing August 2026 data
     const FALLBACK_CSV = `Order Date,Order ID,Region,Product Name,Pack Size,Units Sold,Total Revenue (PKR),Payment Method,Payment Status,Remaining Stock,Rating,Customer Feedback,Customer Details
@@ -1865,10 +1865,10 @@
       if (match) sheetId = match[1];
 
       const targets = [
-        { name: "operations", gid: "13038792", callback: "handleOperationsData" },
-        { name: "expense", gid: "1406896990", callback: "handleExpenseData" },
-        { name: "stock", gid: "1486758448", callback: "handleStockData" },
-        { name: "followup", gid: "492594552", callback: "handleFollowupData" }
+        { name: "operations", gid: "1734037466", callback: "handleOperationsData" },
+        { name: "expense", gid: "964921241", callback: "handleExpenseData" },
+        { name: "stock", gid: "1665727063", callback: "handleStockData" },
+        { name: "followup", gid: "1100782136", callback: "handleFollowupData" }
       ];
 
       targets.forEach(t => {
