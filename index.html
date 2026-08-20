@@ -196,6 +196,19 @@
       padding: 6px 14px;
       border-radius: 20px;
       border: 1px solid rgba(0, 0, 0, 0.05);
+      cursor: pointer;
+      transition: all 0.2s ease;
+      user-select: none;
+    }
+
+    .sync-status:hover {
+      background: rgba(0, 0, 0, 0.07);
+      color: var(--text-primary);
+      transform: scale(1.02);
+    }
+
+    .sync-status:active {
+      transform: scale(0.98);
     }
 
     .status-dot {
@@ -871,8 +884,8 @@
       </button>
     </div>
 
-    <!-- Sync status indicator -->
-    <div class="sync-status">
+    <!-- Sync status indicator (clickable for manual sync) -->
+    <div class="sync-status" id="syncStatusBtn" title="Click to sync now">
       <span class="status-dot" id="syncDot"></span>
       <span id="syncText">Loading...</span>
     </div>
@@ -2912,11 +2925,19 @@
     });
 
 
+    // Bind manual sync trigger to navbar status indicator button
+    const syncStatusBtn = document.getElementById("syncStatusBtn");
+    if (syncStatusBtn) {
+      syncStatusBtn.addEventListener("click", () => {
+        fetchAllData();
+      });
+    }
+
     /* ==========================================================================
        INITIALIZATION
        ========================================================================== */
     fetchAllData();
-    setInterval(fetchAllData, 15000); // 15s background sync polling loop
+    setInterval(fetchAllData, 5000); // 5s background sync polling loop (snappy live updates)
   </script>
 </body>
 </html>
