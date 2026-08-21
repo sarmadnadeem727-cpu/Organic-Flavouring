@@ -1253,10 +1253,15 @@
         </div>
       </div>
     </div>
-    </div>
+  </div>
+
+  <!-- FULL LIVE EXCEL SPREADSHEET VIEW -->
+  <div id="excelBg" style="display: none; width: 100%; height: calc(100vh - 65px); padding: 12px 24px; box-sizing: border-box; max-width: 1600px; margin: 0 auto;">
+    <iframe id="liveSheetFrame" src="https://docs.google.com/spreadsheets/d/1LJX3W405oTxyRluiBnQ0y8AHGCaoLCf8/edit?usp=sharing&widget=true&headers=true" style="width: 100%; height: 100%; border: 1px solid var(--card-border); border-radius: 8px; box-shadow: var(--card-shadow);" allowfullscreen></iframe>
+  </div>
 
   <!-- FLOATING EXIT BUTTON FOR ACTIVE EXCEL EDIT MODE -->
-  <button class="exit-sheet-floating-btn" id="exitSheetBtn">
+  <button class="exit-sheet-floating-btn" id="exitSheetBtn" style="display: none;">
     Return to Dashboard UI
   </button>
 
@@ -2854,27 +2859,33 @@
     const exitSheetBtn = document.getElementById("exitSheetBtn");
 
     function setDashboardView() {
-      viewExcelBtn.classList.remove("active");
-      viewDashboardBtn.classList.add("active");
-      excelBg.classList.remove("active-excel");
-      dashboardContainer.classList.remove("hidden");
-      exitSheetBtn.style.display = "none";
+      if (viewExcelBtn) viewExcelBtn.classList.remove("active");
+      if (viewDashboardBtn) viewDashboardBtn.classList.add("active");
+      if (excelBg) excelBg.style.display = "none";
+      if (dashboardContainer) {
+        dashboardContainer.style.display = "flex";
+        dashboardContainer.classList.remove("hidden");
+      }
+      if (exitSheetBtn) exitSheetBtn.style.display = "none";
       
       // Force trigger data fetch immediately upon returning from spreadsheet edit mode
       fetchAllData();
     }
 
     function setExcelView() {
-      viewDashboardBtn.classList.remove("active");
-      viewExcelBtn.classList.add("active");
-      excelBg.classList.add("active-excel");
-      dashboardContainer.classList.add("hidden");
-      exitSheetBtn.style.display = "flex";
+      if (viewDashboardBtn) viewDashboardBtn.classList.remove("active");
+      if (viewExcelBtn) viewExcelBtn.classList.add("active");
+      if (excelBg) excelBg.style.display = "block";
+      if (dashboardContainer) {
+        dashboardContainer.style.display = "none";
+        dashboardContainer.classList.add("hidden");
+      }
+      if (exitSheetBtn) exitSheetBtn.style.display = "flex";
     }
 
-    viewDashboardBtn.addEventListener("click", setDashboardView);
-    viewExcelBtn.addEventListener("click", setExcelView);
-    exitSheetBtn.addEventListener("click", setDashboardView);
+    if (viewDashboardBtn) viewDashboardBtn.addEventListener("click", setDashboardView);
+    if (viewExcelBtn) viewExcelBtn.addEventListener("click", setExcelView);
+    if (exitSheetBtn) exitSheetBtn.addEventListener("click", setDashboardView);
 
     // Sub-tab switcher bindings
     document.querySelectorAll(".tab-switcher button").forEach(btn => {
@@ -2883,15 +2894,23 @@
         document.querySelectorAll(".tab-panel").forEach(p => p.classList.remove("active"));
         btn.classList.add("active");
         
-        const activePanel = document.getElementById("panel-" + btn.dataset.tab);
-        activePanel.classList.add("active");
+        const targetTab = btn.dataset.tab;
+        const activePanel = document.getElementById("panel-" + targetTab);
+        if (activePanel) {
+          activePanel.classList.add("active");
+        }
 
-        // Re-render sub-tab charts (resolves canvas sizing quirks)
+        // Render target tab immediately and re-render after short delay for chart canvas refit
+        if (targetTab === "overview") renderOverviewTab();
+        else if (targetTab === "expense") renderExpenseTab();
+        else if (targetTab === "stock") renderStockTab();
+        else if (targetTab === "followup") renderFollowupTab();
+
         setTimeout(() => {
-          if (btn.dataset.tab === "overview") renderOverviewTab();
-          if (btn.dataset.tab === "expense") renderExpenseTab();
-          if (btn.dataset.tab === "stock") renderStockTab();
-          if (btn.dataset.tab === "followup") renderFollowupTab();
+          if (targetTab === "overview") renderOverviewTab();
+          else if (targetTab === "expense") renderExpenseTab();
+          else if (targetTab === "stock") renderStockTab();
+          else if (targetTab === "followup") renderFollowupTab();
         }, 50);
       });
     });
@@ -2900,15 +2919,32 @@
     /* ==========================================================================
        SEARCH BINDINGS & EVENT LISTENERS
        ========================================================================== */
-    document.getElementById("regionFilter").addEventListener("change", applyFilters);
-    document.getElementById("productFilter").addEventListener("change", applyFilters);
-    document.getElementById("statusFilter").addEventListener("change", applyFilters);
-    document.getElementById("cohortFilter").addEventListener("change", applyFilters);
-    document.getElementById("searchInput").addEventListener("input", renderOverviewTable);
-    document.getElementById("expenseSearch").addEventListener("input", renderExpenseTab);
-    document.getElementById("stockSearch").addEventListener("input", renderStockTab);
-    document.getElementById("followupSearch").addEventListener("input", renderFollowupTab);
-    document.getElementById("followupStatusFilter").addEventListener("change", renderFollowupTab);
+    const regionEl = document.getElementById("regionFilter");
+    if (regionEl) regionEl.addEventListener("change", applyFilters);
+
+    const productEl = document.getElementById("productFilter");
+    if (productEl) productEl.addEventListener("change", applyFilters);
+
+    const statusEl = document.getElementById("statusFilter");
+    if (statusEl) statusEl.addEventListener("change", applyFilters);
+
+    const cohortEl = document.getElementById("cohortFilter");
+    if (cohortEl) cohortEl.addEventListener("change", applyFilters);
+
+    const searchInputEl = document.getElementById("searchInput");
+    if (searchInputEl) searchInputEl.addEventListener("input", renderOverviewTable);
+
+    const expenseSearchEl = document.getElementById("expenseSearch");
+    if (expenseSearchEl) expenseSearchEl.addEventListener("input", renderExpenseTab);
+
+    const stockSearchEl = document.getElementById("stockSearch");
+    if (stockSearchEl) stockSearchEl.addEventListener("input", renderStockTab);
+
+    const followupSearchEl = document.getElementById("followupSearch");
+    if (followupSearchEl) followupSearchEl.addEventListener("input", renderFollowupTab);
+
+    const followupStatusFilterEl = document.getElementById("followupStatusFilter");
+    if (followupStatusFilterEl) followupStatusFilterEl.addEventListener("change", renderFollowupTab);
 
     // Overview Table column sorting triggers
     document.querySelectorAll("#panel-overview table thead th").forEach(th => {
@@ -2934,7 +2970,6 @@
         renderOverviewTab();
       });
     });
-
 
     // Bind manual sync trigger to navbar status indicator button
     const syncStatusBtn = document.getElementById("syncStatusBtn");
