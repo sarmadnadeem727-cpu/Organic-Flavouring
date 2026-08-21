@@ -1026,27 +1026,6 @@
             <tfoot id="tableFoot"></tfoot>
           </table>
       </div>
-
-      <!-- Live Google Sheet Embed: Operations -->
-      <div class="glass-card" style="padding: 0; overflow: hidden;">
-        <div class="card-header-bar" style="padding: 14px 20px;">
-          <h3 style="display:flex;align-items:center;gap:8px;">
-            <span style="color:var(--pbi-green);font-size:9px;">&#9679;</span>
-            Live Google Sheet — Operations
-            <small style="font-size:11px;font-weight:400;color:var(--text-secondary);">(auto-synced)</small>
-          </h3>
-          <a href="https://docs.google.com/spreadsheets/d/1LJX3W405oTxyRluiBnQ0y8AHGCaoLCf8/edit#gid=1734037466" target="_blank"
-             style="font-size:12px;color:var(--pbi-blue);text-decoration:none;font-weight:500;">Open in Google Sheets &#x2197;</a>
-        </div>
-        <iframe
-          id="sheetEmbed_operations"
-          src="https://docs.google.com/spreadsheets/d/1LJX3W405oTxyRluiBnQ0y8AHGCaoLCf8/pubhtml?gid=1734037466&single=true&widget=false&headers=false&chrome=false"
-          style="width:100%;height:480px;border:none;display:block;"
-          loading="lazy"
-          title="Live Operations Sheet">
-        </iframe>
-      </div>
-
     </div>
 
     <!-- ================================================================
@@ -1110,27 +1089,6 @@
           </table>
         </div>
       </div>
-
-      <!-- Live Google Sheet Embed: Expense vs Profit -->
-      <div class="glass-card" style="padding: 0; overflow: hidden;">
-        <div class="card-header-bar" style="padding: 14px 20px;">
-          <h3 style="display:flex;align-items:center;gap:8px;">
-            <span style="color:var(--pbi-green);font-size:9px;">&#9679;</span>
-            Live Google Sheet — Expense vs Profit
-            <small style="font-size:11px;font-weight:400;color:var(--text-secondary);">(auto-synced)</small>
-          </h3>
-          <a href="https://docs.google.com/spreadsheets/d/1LJX3W405oTxyRluiBnQ0y8AHGCaoLCf8/edit#gid=964921241" target="_blank"
-             style="font-size:12px;color:var(--pbi-blue);text-decoration:none;font-weight:500;">Open in Google Sheets &#x2197;</a>
-        </div>
-        <iframe
-          id="sheetEmbed_expense"
-          src="https://docs.google.com/spreadsheets/d/1LJX3W405oTxyRluiBnQ0y8AHGCaoLCf8/pubhtml?gid=964921241&single=true&widget=false&headers=false&chrome=false"
-          style="width:100%;height:480px;border:none;display:block;"
-          loading="lazy"
-          title="Live Expense vs Profit Sheet">
-        </iframe>
-      </div>
-
     </div>
 
     <!-- ================================================================
@@ -1204,27 +1162,6 @@
           </table>
         </div>
       </div>
-
-      <!-- Live Google Sheet Embed: Stock Management -->
-      <div class="glass-card" style="padding: 0; overflow: hidden;">
-        <div class="card-header-bar" style="padding: 14px 20px;">
-          <h3 style="display:flex;align-items:center;gap:8px;">
-            <span style="color:var(--pbi-green);font-size:9px;">&#9679;</span>
-            Live Google Sheet — Stock Management
-            <small style="font-size:11px;font-weight:400;color:var(--text-secondary);">(auto-synced)</small>
-          </h3>
-          <a href="https://docs.google.com/spreadsheets/d/1LJX3W405oTxyRluiBnQ0y8AHGCaoLCf8/edit#gid=1665727063" target="_blank"
-             style="font-size:12px;color:var(--pbi-blue);text-decoration:none;font-weight:500;">Open in Google Sheets &#x2197;</a>
-        </div>
-        <iframe
-          id="sheetEmbed_stock"
-          src="https://docs.google.com/spreadsheets/d/1LJX3W405oTxyRluiBnQ0y8AHGCaoLCf8/pubhtml?gid=1665727063&single=true&widget=false&headers=false&chrome=false"
-          style="width:100%;height:480px;border:none;display:block;"
-          loading="lazy"
-          title="Live Stock Management Sheet">
-        </iframe>
-      </div>
-
     </div>
 
     <!-- ================================================================
@@ -1316,27 +1253,6 @@
         </div>
       </div>
     </div>
-
-      <!-- Live Google Sheet Embed: Customer Follow-up -->
-      <div class="glass-card" style="padding: 0; overflow: hidden;">
-        <div class="card-header-bar" style="padding: 14px 20px;">
-          <h3 style="display:flex;align-items:center;gap:8px;">
-            <span style="color:var(--pbi-green);font-size:9px;">&#9679;</span>
-            Live Google Sheet — Customer Follow-up
-            <small style="font-size:11px;font-weight:400;color:var(--text-secondary);">(auto-synced)</small>
-          </h3>
-          <a href="https://docs.google.com/spreadsheets/d/1LJX3W405oTxyRluiBnQ0y8AHGCaoLCf8/edit#gid=1100782136" target="_blank"
-             style="font-size:12px;color:var(--pbi-blue);text-decoration:none;font-weight:500;">Open in Google Sheets &#x2197;</a>
-        </div>
-        <iframe
-          id="sheetEmbed_followup"
-          src="https://docs.google.com/spreadsheets/d/1LJX3W405oTxyRluiBnQ0y8AHGCaoLCf8/pubhtml?gid=1100782136&single=true&widget=false&headers=false&chrome=false"
-          style="width:100%;height:480px;border:none;display:block;"
-          loading="lazy"
-          title="Live Customer Follow-up Sheet">
-        </iframe>
-      </div>
-
     </div>
 
   <!-- FLOATING EXIT BUTTON FOR ACTIVE EXCEL EDIT MODE -->
@@ -1654,22 +1570,6 @@
         // Repopulate filters then re-render ALL tabs so every tab is up to date
         populateFilterDropdowns(rawData);
         applyFilters(); // applyFilters calls renderAll() internally
-
-        // Reload embedded Google Sheet iframes to reflect latest sheet data
-        const sheetId = "1LJX3W405oTxyRluiBnQ0y8AHGCaoLCf8";
-        const embedMap = {
-          sheetEmbed_operations: "1734037466",
-          sheetEmbed_expense:    "964921241",
-          sheetEmbed_stock:      "1665727063",
-          sheetEmbed_followup:   "1100782136"
-        };
-        Object.entries(embedMap).forEach(([id, gid]) => {
-          const frame = document.getElementById(id);
-          if (frame) {
-            const base = `https://docs.google.com/spreadsheets/d/${sheetId}/pubhtml?gid=${gid}&single=true&widget=false&headers=false&chrome=false`;
-            frame.src = base + "&ts=" + Date.now();
-          }
-        });
       }
     }
 
@@ -1813,194 +1713,202 @@
       return parsedData;
     }
 
+    // Helper: get actual headers from cols or first data row (handles A/B/C generic labels too)
+    function getActualHeaders(cols, rows) {
+      const colLabels = cols.map(c => ((c && c.label) || '').trim());
+      const allGeneric = colLabels.every(l => l === '' || /^[A-Z]$/.test(l));
+      if (allGeneric && rows.length > 0) {
+        const firstRow = rows[0];
+        if (firstRow && firstRow.c) {
+          const candidate = firstRow.c.map(c => c && c.v !== null ? String(c.v) : '');
+          // Accept as header row if majority of cells are non-numeric strings
+          const textCells = candidate.filter(v => v && isNaN(Number(v)));
+          if (textCells.length >= Math.max(1, candidate.length * 0.4)) {
+            return { headers: candidate.map(h => h.trim().toLowerCase().replace(/[^a-z0-9]/g, '')), startRow: 1 };
+          }
+        }
+      }
+      return { headers: colLabels.map(l => l.toLowerCase().replace(/[^a-z0-9]/g, '')), startRow: 0 };
+    }
+
+    // Helper: fuzzy map a raw header string to a canonical field name
+    function fuzzyMap(h, mapPairs) {
+      for (const [pattern, key] of mapPairs) {
+        if (h.includes(pattern)) return key;
+      }
+      return h;
+    }
+
+    // Helper: parse a cell value as a number
+    function cellNum(cell) {
+      if (!cell) return 0;
+      if (typeof cell.v === 'number') return cell.v;
+      return parseFloat(String(cell.v || '').replace(/[^0-9.-]/g, '')) || 0;
+    }
+
+    // Helper: parse a cell value as a date string
+    function cellDate(cell) {
+      if (!cell) return '';
+      if (typeof cell.v === 'string' && cell.v.startsWith('Date(')) {
+        const m = cell.v.match(/Date\((\d+),(\d+),(\d+)\)/);
+        if (m) return m[1] + '-' + String(Number(m[2]) + 1).padStart(2,'0') + '-' + String(Number(m[3])).padStart(2,'0');
+      }
+      return formatDate((cell.f || String(cell.v || '')));
+    }
+
     function parseExpenseSheetJson(json) {
       if (!json || !json.table || !json.table.rows || json.table.rows.length <= 0) return [];
-      
-      const cols = json.table.cols;
+      const { headers, startRow } = getActualHeaders(json.table.cols, json.table.rows);
       const rows = json.table.rows;
-      const headers = cols.map(c => ((c && c.label) || '').trim().toLowerCase().replace(/[^a-z0-9]/g, ''));
-      
-      let startRowIndex = 0;
-      let actualHeaders = headers;
-      
-      const firstRowCells = (rows[0] && rowHasHeaderKeywords(rows[0])) ? rows[0].c : null;
-      if (firstRowCells && cols.every(c => !c.label)) {
-        actualHeaders = firstRowCells.map(c => (c ? String(c.v) : '').trim().toLowerCase().replace(/[^a-z0-9]/g, ''));
-        startRowIndex = 1;
-      }
-      
-      const parsedData = [];
-      const EXPENSE_MAP = {
-        'sr': 'sr', 'srno': 'sr', 'srnum': 'sr',
-        'date': 'date',
-        'customername': 'customer', 'customer': 'customer',
-        'product': 'product', 'productname': 'product',
-        'quantity': 'quantity', 'quantitykgs': 'quantity', 'qty': 'quantity',
-        'expense': 'expense', 'expenses': 'expense',
-        'saleprice': 'salePrice', 'sales': 'salePrice',
-        'profit': 'profit',
-        'transportcost': 'transportCost', 'freight': 'transportCost',
-        'netprofit': 'netProfit',
-        'accumulativeprofit': 'accumProfit', 'accumprofit': 'accumProfit',
-        'paymentstatus': 'status', 'payemntstatus': 'status'
-      };
-      
-      const keys = actualHeaders.map(h => EXPENSE_MAP[h] || h);
 
-      for (let i = startRowIndex; i < rows.length; i++) {
+      // Fuzzy column mapping — order matters (more specific first)
+      const EXPENSE_PAIRS = [
+        ['srno','sr'],['srnumber','sr'],['srnum','sr'],['no','sr'],
+        ['customername','customer'],['customer','customer'],
+        ['productname','product'],['product','product'],['item','product'],
+        ['quantitykgs','quantity'],['quantity','quantity'],['qty','quantity'],['kgs','quantity'],['weight','quantity'],
+        ['netprofit','netProfit'],['netrevenue','netProfit'],
+        ['accumulative','accumProfit'],['cumulative','accumProfit'],['accum','accumProfit'],
+        ['transportcost','transportCost'],['transport','transportCost'],['freight','transportCost'],['delivery','transportCost'],
+        ['saleprice','salePrice'],['sale','salePrice'],['revenue','salePrice'],['amount','salePrice'],['total','salePrice'],
+        ['expense','expense'],['cost','expense'],
+        ['profit','profit'],
+        ['paymentstatus','status'],['payment','status'],['payemnt','status'],['status','status'],
+        ['date','date'],
+      ];
+
+      const keys = headers.map(h => fuzzyMap(h, EXPENSE_PAIRS));
+      const parsedData = [];
+
+      for (let i = startRow; i < rows.length; i++) {
         const row = rows[i];
         if (!row || !row.c) continue;
         if (row.c.every(c => !c || c.v === null || c.v === '')) continue;
-        
-        const obj = {};
+
+        const obj = { sr: 0, date: '', customer: '', product: '', quantity: 0,
+                      expense: 0, salePrice: 0, profit: 0, transportCost: 0,
+                      netProfit: 0, accumProfit: 0, status: '' };
+
         for (let j = 0; j < keys.length; j++) {
           const key = keys[j];
           const cell = row.c[j];
-          const val = cell ? cell.v : '';
-          const fVal = cell ? cell.f : '';
-          
-          if (['sr', 'quantity', 'expense', 'salePrice', 'profit', 'transportCost', 'netProfit', 'accumProfit'].includes(key)) {
-            if (cell && typeof cell.v === 'number') {
-              obj[key] = cell.v;
-            } else {
-              obj[key] = parseFloat(String(val).replace(/[^0-9.-]/g, '')) || 0;
-            }
+          if (!cell) continue;
+          if (['sr','quantity','expense','salePrice','profit','transportCost','netProfit','accumProfit'].includes(key)) {
+            obj[key] = cellNum(cell);
           } else if (key === 'date') {
-            if (cell && typeof cell.v === 'string' && cell.v.startsWith('Date(')) {
-              const match = cell.v.match(/Date\((\d+),(\d+),(\d+)\)/);
-              if (match) {
-                obj[key] = match[1] + '-' + String(Number(match[2]) + 1).padStart(2, '0') + '-' + String(Number(match[3])).padStart(2, '0');
-              } else {
-                obj[key] = formatDate(fVal || String(val));
-              }
-            } else {
-              obj[key] = formatDate(fVal || String(val));
-            }
-          } else {
-            obj[key] = cell && cell.v !== null ? String(cell.v) : '';
+            obj[key] = cellDate(cell);
+          } else if (key in obj) {
+            obj[key] = cell.v !== null ? String(cell.v) : '';
           }
         }
-        
-        if (obj.product || obj.customer) {
-          parsedData.push(obj);
-        }
+
+        // Accept row if it has any meaningful data
+        const hasData = obj.customer || obj.product || obj.salePrice > 0 || obj.netProfit !== 0;
+        if (hasData) parsedData.push(obj);
       }
       return parsedData;
     }
 
     function parseStockSheetJson(json) {
       if (!json || !json.table || !json.table.rows || json.table.rows.length <= 0) return [];
-      
-      const cols = json.table.cols;
+      const { headers, startRow } = getActualHeaders(json.table.cols, json.table.rows);
       const rows = json.table.rows;
-      const headers = cols.map(c => ((c && c.label) || '').trim().toLowerCase().replace(/[^a-z0-9]/g, ''));
-      
-      let startRowIndex = 0;
-      let actualHeaders = headers;
-      
-      const firstRowCells = (rows[0] && rowHasHeaderKeywords(rows[0])) ? rows[0].c : null;
-      if (firstRowCells && cols.every(c => !c.label)) {
-        actualHeaders = firstRowCells.map(c => (c ? String(c.v) : '').trim().toLowerCase().replace(/[^a-z0-9]/g, ''));
-        startRowIndex = 1;
-      }
-      
-      const parsedData = [];
-      const STOCK_MAP = {
-        'product': 'product', 'productname': 'product',
-        'quantity': 'qtyIn', 'quantitykgs': 'qtyIn', 'qty': 'qtyIn',
-        'vendor': 'vendor', 'vendorname': 'vendor',
-        'retailprice': 'retailPrice', 'cost': 'retailPrice',
-        'transportcharges': 'transportCharge', 'transpotcharges': 'transportCharge', 'freight': 'transportCharge'
-      };
-      
-      const keys = actualHeaders.map(h => STOCK_MAP[h] || h);
 
-      for (let i = startRowIndex; i < rows.length; i++) {
+      const STOCK_PAIRS = [
+        ['productname','product'],['product','product'],['item','product'],['flavour','product'],['flavor','product'],
+        ['quantitykgs','qtyIn'],['quantityin','qtyIn'],['qtyin','qtyIn'],['qtypurchased','qtyIn'],
+        ['quantity','qtyIn'],['qty','qtyIn'],['stockin','qtyIn'],['purchased','qtyIn'],
+        ['qtyout','qtyOut'],['stockout','qtyOut'],['sold','qtyOut'],['dispatched','qtyOut'],
+        ['vendorname','vendor'],['vendor','vendor'],['supplier','vendor'],
+        ['retailprice','retailPrice'],['purchaseprice','retailPrice'],['costprice','retailPrice'],['unitcost','retailPrice'],['cost','retailPrice'],
+        ['transportcharges','transportCharge'],['transpotcharges','transportCharge'],['transport','transportCharge'],['freight','transportCharge'],
+        ['datein','dateIn'],['purchasedate','dateIn'],
+        ['dateout','dateOut'],['saledate','dateOut'],
+        ['buyername','buyer'],['buyer','buyer'],['customer','buyer'],
+        ['saleprice','outSalePrice'],['sellingprice','outSalePrice'],
+        ['remaining','remainingQty'],['balance','remainingQty'],['stock','remainingQty'],
+        ['profitmargin','profitMargin'],['margin','profitMargin'],
+        ['paymentstatus','payStatus'],['payment','payStatus'],['status','payStatus'],
+        ['remarks','remarks'],['notes','remarks'],['comment','remarks'],
+      ];
+
+      const keys = headers.map(h => fuzzyMap(h, STOCK_PAIRS));
+      const parsedData = [];
+
+      for (let i = startRow; i < rows.length; i++) {
         const row = rows[i];
         if (!row || !row.c) continue;
         if (row.c.every(c => !c || c.v === null || c.v === '')) continue;
-        
-        const obj = {};
+
+        const obj = { product: '', qtyIn: 0, qtyOut: 0, vendor: '', retailPrice: 0,
+                      transportCharge: 0, dateIn: '', dateOut: '', buyer: '',
+                      outSalePrice: 0, remainingQty: 0, profitMargin: 0,
+                      payStatus: '', remarks: '' };
+
         for (let j = 0; j < keys.length; j++) {
           const key = keys[j];
           const cell = row.c[j];
-          const val = cell ? cell.v : '';
-          
-          if (['qtyIn', 'retailPrice', 'transportCharge'].includes(key)) {
-            if (cell && typeof cell.v === 'number') {
-              obj[key] = cell.v;
-            } else {
-              obj[key] = parseFloat(String(val).replace(/[^0-9.-]/g, '')) || 0;
-            }
-          } else {
-            obj[key] = cell && cell.v !== null ? String(cell.v) : '';
+          if (!cell) continue;
+          if (['qtyIn','qtyOut','retailPrice','transportCharge','outSalePrice','remainingQty','profitMargin'].includes(key)) {
+            obj[key] = cellNum(cell);
+          } else if (['dateIn','dateOut'].includes(key)) {
+            obj[key] = cellDate(cell);
+          } else if (key in obj) {
+            obj[key] = cell.v !== null ? String(cell.v) : '';
           }
         }
-        
-        if (obj.product) {
-          parsedData.push(obj);
-        }
+
+        const hasData = obj.product || obj.qtyIn > 0 || obj.vendor;
+        if (hasData) parsedData.push(obj);
       }
       return parsedData;
     }
 
     function parseFollowupSheetJson(json) {
       if (!json || !json.table || !json.table.rows || json.table.rows.length <= 0) return [];
-      
-      const cols = json.table.cols;
+      const { headers, startRow } = getActualHeaders(json.table.cols, json.table.rows);
       const rows = json.table.rows;
-      const headers = cols.map(c => ((c && c.label) || '').trim().toLowerCase().replace(/[^a-z0-9]/g, ''));
-      
-      let startRowIndex = 0;
-      let actualHeaders = headers;
-      
-      const firstRowCells = (rows[0] && rowHasHeaderKeywords(rows[0])) ? rows[0].c : null;
-      if (firstRowCells && cols.every(c => !c.label)) {
-        actualHeaders = firstRowCells.map(c => (c ? String(c.v) : '').trim().toLowerCase().replace(/[^a-z0-9]/g, ''));
-        startRowIndex = 1;
-      }
-      
-      const parsedData = [];
-      const FOLLOWUP_MAP = {
-        'customer': 'customer', 'customername': 'customer',
-        'region': 'region',
-        'lastorderdate': 'lastOrderDate',
-        'lastproduct': 'lastProduct',
-        'lastorderid': 'lastOrderId',
-        'totalorders': 'totalOrders',
-        'totalspent': 'totalSpent',
-        'dayssince': 'daysSince',
-        'followupstatus': 'followupStatus',
-        'phone': 'phone', 'contact': 'phone'
-      };
-      
-      const keys = actualHeaders.map(h => FOLLOWUP_MAP[h] || h);
 
-      for (let i = startRowIndex; i < rows.length; i++) {
+      const FOLLOWUP_PAIRS = [
+        ['customername','customer'],['customer','customer'],['client','customer'],['name','customer'],
+        ['region','region'],['area','region'],['city','region'],['location','region'],
+        ['lastorderdate','lastOrderDate'],['lastdate','lastOrderDate'],['orderdate','lastOrderDate'],
+        ['lastproduct','lastProduct'],['lastitem','lastProduct'],
+        ['lastorderid','lastOrderId'],['orderid','lastOrderId'],['orderno','lastOrderId'],
+        ['totalorders','totalOrders'],['orders','totalOrders'],['ordercount','totalOrders'],
+        ['totalspent','totalSpent'],['spent','totalSpent'],['totalamount','totalSpent'],['total','totalSpent'],
+        ['dayssince','daysSince'],['days','daysSince'],['idle','daysSince'],
+        ['followupstatus','followupStatus'],['followup','followupStatus'],['status','followupStatus'],
+        ['phone','phone'],['contact','phone'],['mobile','phone'],['number','phone'],
+      ];
+
+      const keys = headers.map(h => fuzzyMap(h, FOLLOWUP_PAIRS));
+      const parsedData = [];
+
+      for (let i = startRow; i < rows.length; i++) {
         const row = rows[i];
         if (!row || !row.c) continue;
         if (row.c.every(c => !c || c.v === null || c.v === '')) continue;
-        
-        const obj = {};
+
+        const obj = { customer: '', region: '', lastOrderDate: '', lastProduct: '',
+                      lastOrderId: '', totalOrders: 0, totalSpent: 0,
+                      daysSince: 0, followupStatus: '', phone: '' };
+
         for (let j = 0; j < keys.length; j++) {
           const key = keys[j];
           const cell = row.c[j];
-          const val = cell ? cell.v : '';
-          
-          if (['totalOrders', 'totalSpent', 'daysSince'].includes(key)) {
-            if (cell && typeof cell.v === 'number') {
-              obj[key] = cell.v;
-            } else {
-              obj[key] = parseFloat(String(val).replace(/[^0-9.-]/g, '')) || 0;
-            }
-          } else {
-            obj[key] = cell && cell.v !== null ? String(cell.v) : '';
+          if (!cell) continue;
+          if (['totalOrders','totalSpent','daysSince'].includes(key)) {
+            obj[key] = cellNum(cell);
+          } else if (key === 'lastOrderDate') {
+            obj[key] = cellDate(cell);
+          } else if (key in obj) {
+            obj[key] = cell.v !== null ? String(cell.v) : '';
           }
         }
-        
-        if (obj.customer) {
-          parsedData.push(obj);
-        }
+
+        const hasData = obj.customer || obj.totalOrders > 0 || obj.lastProduct;
+        if (hasData) parsedData.push(obj);
       }
       return parsedData;
     }
