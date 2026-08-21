@@ -1510,12 +1510,18 @@
       followup: null
     };
 
+    // Guard: prevent a new fetch from starting while one is still in-flight
+    let isFetching = false;
+
     function checkAllSheetsLoaded() {
-      if (sheetsData.operations !== null && 
-          sheetsData.expense !== null && 
-          sheetsData.stock !== null && 
+      if (sheetsData.operations !== null &&
+          sheetsData.expense !== null &&
+          sheetsData.stock !== null &&
           sheetsData.followup !== null) {
-        
+
+        // All 4 sheets have responded — allow next fetch cycle
+        isFetching = false;
+
         const syncDot = document.getElementById("syncDot");
         const syncText = document.getElementById("syncText");
 
@@ -1527,85 +1533,130 @@
         }
 
         // Parse expense
-        if (sheetsData.expense && sheetsData.expense !== "fallback") {
-          expenseSheetData = parseExpenseSheetJson(sheetsData.expense);
-        } else {
-          expenseSheetData = [];
-        }
+        expenseSheetData = (sheetsData.expense && sheetsData.expense !== "fallback")
+          ? parseExpenseSheetJson(sheetsData.expense) : [];
 
         // Parse stock
-        if (sheetsData.stock && sheetsData.stock !== "fallback") {
-          stockSheetData = parseStockSheetJson(sheetsData.stock);
-        } else {
-          stockSheetData = [];
-        }
+        stockSheetData = (sheetsData.stock && sheetsData.stock !== "fallback")
+          ? parseStockSheetJson(sheetsData.stock) : [];
 
         // Parse followup
-        if (sheetsData.followup && sheetsData.followup !== "fallback") {
-          followupSheetData = parseFollowupSheetJson(sheetsData.followup);
-        } else {
-          followupSheetData = [];
-        }
+        followupSheetData = (sheetsData.followup && sheetsData.followup !== "fallback")
+          ? parseFollowupSheetJson(sheetsData.followup) : [];
 
-        const anyLiveSucceeded = 
-          sheetsData.operations !== "fallback" ||
-          sheetsData.expense !== "fallback" ||
-          sheetsData.stock !== "fallback" ||
-          sheetsData.followup !== "fallback";
-
-        const allLiveSucceeded = 
+        const allLiveSucceeded =
           sheetsData.operations && sheetsData.operations !== "fallback" &&
-          sheetsData.expense && sheetsData.expense !== "fallback" &&
-          sheetsData.stock && sheetsData.stock !== "fallback" &&
-          sheetsData.followup && sheetsData.followup !== "fallback";
+          sheetsData.expense   && sheetsData.expense   !== "fallback" &&
+          sheetsData.stock     && sheetsData.stock     !== "fallback" &&
+          sheetsData.followup  && sheetsData.followup  !== "fallback";
+
+        const anyLiveSucceeded =
+          sheetsData.operations !== "fallback" ||
+          sheetsData.expense    !== "fallback" ||
+          sheetsData.stock      !== "fallback" ||
+          sheetsData.followup   !== "fallback";
 
         if (allLiveSucceeded) {
           syncDot.className = "status-dot live";
-          syncText.innerHTML = `Live Connected`;
+          syncDot.style.backgroundColor = "";
+          syncText.innerHTML = `Live Connected <small style="opacity:.6;font-size:10px;">&#8635;</small>`;
         } else if (anyLiveSucceeded) {
           syncDot.className = "status-dot live";
-          // Custom yellow color for partial load
           syncDot.style.backgroundColor = "var(--pbi-yellow)";
           syncText.innerHTML = `Live Connected (Partial)`;
         } else {
           syncDot.className = "status-dot error";
-          syncDot.style.backgroundColor = ""; // reset inline overrides
-          syncText.innerHTML = `Sync Failed - Local Fallback`;
+          syncDot.style.backgroundColor = "";
+          syncText.innerHTML = `Sync Failed — Local Fallback`;
         }
 
+        // Repopulate filters then re-render ALL tabs so every tab is up to date
         populateFilterDropdowns(rawData);
-        applyFilters();
+        applyFilters(); // applyFilters calls renderAll() internally
       }
     }
 
-    // Callbacks for JSONP endpoints
+    // JSONP callbacks
     window.handleOperationsData = function(json) {
       sheetsData.operations = json;
+      const s = document.getElementById("jsonpSyncScript_operations");
+      if (s) s.remove();
       checkAllSheetsLoaded();
-      const script = document.getElementById("jsonpSyncScript_operations");
-      if (script) script.remove();
     };
-
     window.handleExpenseData = function(json) {
       sheetsData.expense = json;
+      const s = document.getElementById("jsonpSyncScript_expense");
+      if (s) s.remove();
       checkAllSheetsLoaded();
-      const script = document.getElementById("jsonpSyncScript_expense");
-      if (script) script.remove();
     };
-
     window.handleStockData = function(json) {
       sheetsData.stock = json;
+      const s = document.getElementById("jsonpSyncScript_stock");
+      if (s) s.remove();
       checkAllSheetsLoaded();
-      const script = document.getElementById("jsonpSyncScript_stock");
-      if (script) script.remove();
     };
-
     window.handleFollowupData = function(json) {
       sheetsData.followup = json;
+      const s = document.getElementById("jsonpSyncScript_followup");
+      if (s) s.remove();
       checkAllSheetsLoaded();
-      const script = document.getElementById("jsonpSyncScript_followup");
-      if (script) script.remove();
     };
+
+    function fetchAllData() {
+      // Skip if a fetch cycle is still in-flight (prevents DOM flooding)
+      if (isFetching) return;
+      isFetching = true;
+
+      const syncDot = document.getElementById("syncDot");
+      const syncText = document.getElementById("syncText");
+      syncDot.className = "status-dot syncing";
+      syncDot.style.backgroundColor = "";
+      syncText.textContent = "Syncing live...";
+
+      // Reset tracker so all 4 must respond before rendering
+      sheetsData = { operations: null, expense: null, stock: null, followup: null };
+
+      const sheetIdMatch = GOOGLE_SHEETS_CSV_URL.match(/\/d\/([a-zA-Z0-9-_]+)/);
+      const sheetId = sheetIdMatch ? sheetIdMatch[1] : "1LJX3W405oTxyRluiBnQ0y8AHGCaoLCf8";
+
+      const targets = [
+        { name: "operations", gid: "1734037466", callback: "handleOperationsData" },
+        { name: "expense",    gid: "964921241",  callback: "handleExpenseData" },
+        { name: "stock",      gid: "1665727063", callback: "handleStockData" },
+        { name: "followup",   gid: "1100782136", callback: "handleFollowupData" }
+      ];
+
+      // Safety: if sheets don't all respond in 15s, mark remainder as fallback
+      const timeoutId = setTimeout(() => {
+        let timedOut = false;
+        ["operations","expense","stock","followup"].forEach(name => {
+          if (sheetsData[name] === null) {
+            sheetsData[name] = "fallback";
+            timedOut = true;
+          }
+        });
+        if (timedOut) checkAllSheetsLoaded();
+      }, 15000);
+
+      targets.forEach(t => {
+        // Remove any previous script tag for this target
+        const old = document.getElementById(`jsonpSyncScript_${t.name}`);
+        if (old) old.remove();
+
+        const script = document.createElement("script");
+        script.id = `jsonpSyncScript_${t.name}`;
+        script.src = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=responseHandler:${t.callback}&gid=${t.gid}&t=${Date.now()}`;
+        script.onerror = () => {
+          console.warn(`JSONP failed for ${t.name}, using fallback.`);
+          sheetsData[t.name] = "fallback";
+          const el = document.getElementById(`jsonpSyncScript_${t.name}`);
+          if (el) el.remove();
+          clearTimeout(timeoutId);
+          checkAllSheetsLoaded();
+        };
+        document.body.appendChild(script);
+      });
+    }
 
     function rowHasHeaderKeywords(row) {
       if (!row || !row.c) return false;
@@ -2929,6 +2980,7 @@
     const syncStatusBtn = document.getElementById("syncStatusBtn");
     if (syncStatusBtn) {
       syncStatusBtn.addEventListener("click", () => {
+        isFetching = false; // allow immediate manual sync regardless of state
         fetchAllData();
       });
     }
@@ -2937,7 +2989,8 @@
        INITIALIZATION
        ========================================================================== */
     fetchAllData();
-    setInterval(fetchAllData, 5000); // 5s background sync polling loop (snappy live updates)
+    // Poll every 30s — safe interval that waits for the previous fetch to fully complete
+    setInterval(fetchAllData, 30000);
   </script>
 </body>
 </html>
