@@ -1656,18 +1656,18 @@
         applyFilters(); // applyFilters calls renderAll() internally
 
         // Reload embedded Google Sheet iframes to reflect latest sheet data
-        const sheetId = \"1LJX3W405oTxyRluiBnQ0y8AHGCaoLCf8\";
+        const sheetId = "1LJX3W405oTxyRluiBnQ0y8AHGCaoLCf8";
         const embedMap = {
-          sheetEmbed_operations: \"1734037466\",
-          sheetEmbed_expense:    \"964921241\",
-          sheetEmbed_stock:      \"1665727063\",
-          sheetEmbed_followup:   \"1100782136\"
+          sheetEmbed_operations: "1734037466",
+          sheetEmbed_expense:    "964921241",
+          sheetEmbed_stock:      "1665727063",
+          sheetEmbed_followup:   "1100782136"
         };
         Object.entries(embedMap).forEach(([id, gid]) => {
           const frame = document.getElementById(id);
           if (frame) {
             const base = `https://docs.google.com/spreadsheets/d/${sheetId}/pubhtml?gid=${gid}&single=true&widget=false&headers=false&chrome=false`;
-            frame.src = base + \"&ts=\" + Date.now();
+            frame.src = base + "&ts=" + Date.now();
           }
         });
       }
