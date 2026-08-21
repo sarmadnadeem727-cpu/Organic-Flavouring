@@ -1025,7 +1025,26 @@
             <tbody id="tableBody"></tbody>
             <tfoot id="tableFoot"></tfoot>
           </table>
+      </div>
+
+      <!-- Live Google Sheet Embed: Operations -->
+      <div class="glass-card" style="padding: 0; overflow: hidden;">
+        <div class="card-header-bar" style="padding: 14px 20px;">
+          <h3 style="display:flex;align-items:center;gap:8px;">
+            <span style="color:var(--pbi-green);font-size:9px;">&#9679;</span>
+            Live Google Sheet — Operations
+            <small style="font-size:11px;font-weight:400;color:var(--text-secondary);">(auto-synced)</small>
+          </h3>
+          <a href="https://docs.google.com/spreadsheets/d/1LJX3W405oTxyRluiBnQ0y8AHGCaoLCf8/edit#gid=1734037466" target="_blank"
+             style="font-size:12px;color:var(--pbi-blue);text-decoration:none;font-weight:500;">Open in Google Sheets &#x2197;</a>
         </div>
+        <iframe
+          id="sheetEmbed_operations"
+          src="https://docs.google.com/spreadsheets/d/1LJX3W405oTxyRluiBnQ0y8AHGCaoLCf8/pubhtml?gid=1734037466&single=true&widget=false&headers=false&chrome=false"
+          style="width:100%;height:480px;border:none;display:block;"
+          loading="lazy"
+          title="Live Operations Sheet">
+        </iframe>
       </div>
 
     </div>
@@ -1091,6 +1110,27 @@
           </table>
         </div>
       </div>
+
+      <!-- Live Google Sheet Embed: Expense vs Profit -->
+      <div class="glass-card" style="padding: 0; overflow: hidden;">
+        <div class="card-header-bar" style="padding: 14px 20px;">
+          <h3 style="display:flex;align-items:center;gap:8px;">
+            <span style="color:var(--pbi-green);font-size:9px;">&#9679;</span>
+            Live Google Sheet — Expense vs Profit
+            <small style="font-size:11px;font-weight:400;color:var(--text-secondary);">(auto-synced)</small>
+          </h3>
+          <a href="https://docs.google.com/spreadsheets/d/1LJX3W405oTxyRluiBnQ0y8AHGCaoLCf8/edit#gid=964921241" target="_blank"
+             style="font-size:12px;color:var(--pbi-blue);text-decoration:none;font-weight:500;">Open in Google Sheets &#x2197;</a>
+        </div>
+        <iframe
+          id="sheetEmbed_expense"
+          src="https://docs.google.com/spreadsheets/d/1LJX3W405oTxyRluiBnQ0y8AHGCaoLCf8/pubhtml?gid=964921241&single=true&widget=false&headers=false&chrome=false"
+          style="width:100%;height:480px;border:none;display:block;"
+          loading="lazy"
+          title="Live Expense vs Profit Sheet">
+        </iframe>
+      </div>
+
     </div>
 
     <!-- ================================================================
@@ -1164,6 +1204,27 @@
           </table>
         </div>
       </div>
+
+      <!-- Live Google Sheet Embed: Stock Management -->
+      <div class="glass-card" style="padding: 0; overflow: hidden;">
+        <div class="card-header-bar" style="padding: 14px 20px;">
+          <h3 style="display:flex;align-items:center;gap:8px;">
+            <span style="color:var(--pbi-green);font-size:9px;">&#9679;</span>
+            Live Google Sheet — Stock Management
+            <small style="font-size:11px;font-weight:400;color:var(--text-secondary);">(auto-synced)</small>
+          </h3>
+          <a href="https://docs.google.com/spreadsheets/d/1LJX3W405oTxyRluiBnQ0y8AHGCaoLCf8/edit#gid=1665727063" target="_blank"
+             style="font-size:12px;color:var(--pbi-blue);text-decoration:none;font-weight:500;">Open in Google Sheets &#x2197;</a>
+        </div>
+        <iframe
+          id="sheetEmbed_stock"
+          src="https://docs.google.com/spreadsheets/d/1LJX3W405oTxyRluiBnQ0y8AHGCaoLCf8/pubhtml?gid=1665727063&single=true&widget=false&headers=false&chrome=false"
+          style="width:100%;height:480px;border:none;display:block;"
+          loading="lazy"
+          title="Live Stock Management Sheet">
+        </iframe>
+      </div>
+
     </div>
 
     <!-- ================================================================
@@ -1256,7 +1317,27 @@
       </div>
     </div>
 
-  </div>
+      <!-- Live Google Sheet Embed: Customer Follow-up -->
+      <div class="glass-card" style="padding: 0; overflow: hidden;">
+        <div class="card-header-bar" style="padding: 14px 20px;">
+          <h3 style="display:flex;align-items:center;gap:8px;">
+            <span style="color:var(--pbi-green);font-size:9px;">&#9679;</span>
+            Live Google Sheet — Customer Follow-up
+            <small style="font-size:11px;font-weight:400;color:var(--text-secondary);">(auto-synced)</small>
+          </h3>
+          <a href="https://docs.google.com/spreadsheets/d/1LJX3W405oTxyRluiBnQ0y8AHGCaoLCf8/edit#gid=1100782136" target="_blank"
+             style="font-size:12px;color:var(--pbi-blue);text-decoration:none;font-weight:500;">Open in Google Sheets &#x2197;</a>
+        </div>
+        <iframe
+          id="sheetEmbed_followup"
+          src="https://docs.google.com/spreadsheets/d/1LJX3W405oTxyRluiBnQ0y8AHGCaoLCf8/pubhtml?gid=1100782136&single=true&widget=false&headers=false&chrome=false"
+          style="width:100%;height:480px;border:none;display:block;"
+          loading="lazy"
+          title="Live Customer Follow-up Sheet">
+        </iframe>
+      </div>
+
+    </div>
 
   <!-- FLOATING EXIT BUTTON FOR ACTIVE EXCEL EDIT MODE -->
   <button class="exit-sheet-floating-btn" id="exitSheetBtn">
@@ -1573,6 +1654,22 @@
         // Repopulate filters then re-render ALL tabs so every tab is up to date
         populateFilterDropdowns(rawData);
         applyFilters(); // applyFilters calls renderAll() internally
+
+        // Reload embedded Google Sheet iframes to reflect latest sheet data
+        const sheetId = \"1LJX3W405oTxyRluiBnQ0y8AHGCaoLCf8\";
+        const embedMap = {
+          sheetEmbed_operations: \"1734037466\",
+          sheetEmbed_expense:    \"964921241\",
+          sheetEmbed_stock:      \"1665727063\",
+          sheetEmbed_followup:   \"1100782136\"
+        };
+        Object.entries(embedMap).forEach(([id, gid]) => {
+          const frame = document.getElementById(id);
+          if (frame) {
+            const base = `https://docs.google.com/spreadsheets/d/${sheetId}/pubhtml?gid=${gid}&single=true&widget=false&headers=false&chrome=false`;
+            frame.src = base + \"&ts=\" + Date.now();
+          }
+        });
       }
     }
 
