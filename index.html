@@ -1913,51 +1913,6 @@
       return parsedData;
     }
 
-    function fetchAllData() {
-      const syncDot = document.getElementById("syncDot");
-      const syncText = document.getElementById("syncText");
-      syncDot.className = "status-dot syncing";
-      syncDot.style.backgroundColor = ""; // reset inline override
-      syncText.textContent = "Syncing live...";
-
-      // Reset sheetsData tracker
-      sheetsData = {
-        operations: null,
-        expense: null,
-        stock: null,
-        followup: null
-      };
-
-      // Extract sheet ID dynamically
-      let sheetId = "1aGbWL4mhFAvyZevfpKfP3fGCz1D0NQgKDGupHj-tgDA";
-      const match = GOOGLE_SHEETS_CSV_URL.match(/\/d\/([a-zA-Z0-9-_]+)/);
-      if (match) sheetId = match[1];
-
-      const targets = [
-        { name: "operations", gid: "1734037466", callback: "handleOperationsData" },
-        { name: "expense", gid: "964921241", callback: "handleExpenseData" },
-        { name: "stock", gid: "1665727063", callback: "handleStockData" },
-        { name: "followup", gid: "1100782136", callback: "handleFollowupData" }
-      ];
-
-      targets.forEach(t => {
-        const oldScript = document.getElementById(`jsonpSyncScript_${t.name}`);
-        if (oldScript) oldScript.remove();
-
-        const script = document.createElement("script");
-        script.id = `jsonpSyncScript_${t.name}`;
-        script.src = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=responseHandler:${t.callback}&gid=${t.gid}&t=${Date.now()}`;
-        
-        script.onerror = (err) => {
-          console.warn(`Google Sheets JSONP sync failed for ${t.name}, falling back.`, err);
-          sheetsData[t.name] = "fallback";
-          checkAllSheetsLoaded();
-          if (script.parentNode) script.parentNode.removeChild(script);
-        };
-
-        document.body.appendChild(script);
-      });
-    }
 
 
     /* ==========================================================================
