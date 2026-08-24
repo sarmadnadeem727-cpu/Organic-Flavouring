@@ -1525,6 +1525,9 @@
         if (stkJson) stockSheetData = parseStockSheetJson(stkJson);
         if (flwJson) followupSheetData = parseFollowupSheetJson(flwJson);
 
+        // Perform cross-sheet relational calculations & metric intersections
+        linkRelationalSheets();
+
         if (syncDot) {
           syncDot.className = "status-dot live";
           syncDot.style.backgroundColor = "";
@@ -1541,6 +1544,96 @@
         isFetching = false;
         populateFilterDropdowns(rawData);
         renderAll();
+      }
+    }
+
+    /* ==========================================================================
+       RELATIONAL SHEET INTERSECTION & FORMULA ENGINE
+       ========================================================================== */
+    function linkRelationalSheets() {
+      // 1. Operations tab: link with Expense & Stock to compute accurate expenses and net revenues
+      if (rawData && rawData.length > 0) {
+        rawData.forEach(order => {
+          const exp = (expenseSheetData || []).find(e => e.orderId && String(e.orderId).trim().toLowerCase() === String(order.orderId).trim().toLowerCase());
+          if (exp) {
+            order.expenses = exp.expense || 0;
+            order.transportCost = exp.transportCost || 0;
+            order.profit = exp.profit || (order.revenue - order.expenses);
+            order.netRevenue = exp.netProfit || (order.profit - order.transportCost);
+            if (exp.customer && (!order.details || order.details === '')) order.details = exp.customer;
+          } else {
+            const stk = (stockSheetData || []).find(s => s.product && String(s.product).trim().toLowerCase() === String(order.product).trim().toLowerCase());
+            if (stk && stk.retailPrice > 0) {
+              const packGrams = parseFloat(String(order.pack).replace(/[^0-9.]/g, '')) || 1000;
+              const kgWeight = (order.units * packGrams) / 1000;
+              order.expenses = Math.round(stk.retailPrice * kgWeight);
+              order.profit = order.revenue - order.expenses;
+              order.netRevenue = order.profit;
+            } else {
+              order.netRevenue = order.revenue - (order.expenses || 0);
+            }
+          }
+        });
+      }
+
+      // 2. Expense tab: link with Operations by orderId to inherit region, product, and revenue
+      if (expenseSheetData && expenseSheetData.length > 0) {
+        expenseSheetData.forEach(row => {
+          const order = (rawData || []).find(o => o.orderId && String(o.orderId).trim().toLowerCase() === String(row.orderId).trim().toLowerCase());
+          if (order) {
+            if (!row.region) row.region = order.region || "Punjab";
+            if (!row.product) row.product = order.product;
+            if (!row.salePrice || row.salePrice === 0) row.salePrice = order.revenue;
+            if (!row.date) row.date = order.date;
+            if (!row.status) row.status = order.status;
+          }
+          if (!row.profit || row.profit === 0) row.profit = row.salePrice - row.expense;
+          if (!row.netProfit || row.netProfit === 0) row.netProfit = row.profit - row.transportCost;
+        });
+      }
+
+      // 3. Stock tab: intersect with Operations to calculate live stock outflows and turnover
+      if (stockSheetData && stockSheetData.length > 0) {
+        stockSheetData.forEach(item => {
+          const matchingOrders = (rawData || []).filter(o => o.product && String(o.product).trim().toLowerCase() === String(item.product).trim().toLowerCase());
+          if (matchingOrders.length > 0) {
+            let totalSoldKgs = 0;
+            let totalSales = 0;
+            const buyers = new Set();
+            let latestDate = "";
+            matchingOrders.forEach(o => {
+              const packGrams = parseFloat(String(o.pack).replace(/[^0-9.]/g, '')) || 1000;
+              const kgWeight = (o.units * packGrams) / 1000;
+              totalSoldKgs += kgWeight;
+              totalSales += (o.revenue || 0);
+              if (o.details) buyers.add(o.details);
+              if (o.date && (!latestDate || o.date > latestDate)) latestDate = o.date;
+            });
+            if (!item.qtyOut || item.qtyOut === 0) item.qtyOut = totalSoldKgs;
+            if (!item.outSalePrice || item.outSalePrice === 0) item.outSalePrice = totalSales;
+            if (!item.remainingQty || item.remainingQty === 0) item.remainingQty = Math.max(0, item.qtyIn - totalSoldKgs);
+            if (!item.dateOut) item.dateOut = latestDate;
+            if (buyers.size > 0 && !item.buyer) item.buyer = [...buyers].slice(0, 3).join(", ");
+          }
+        });
+      }
+
+      // 4. Follow-up tab: intersect with Operations by customer name
+      if (followupSheetData && followupSheetData.length > 0) {
+        followupSheetData.forEach(c => {
+          const customerOrders = (rawData || []).filter(o => o.details && c.customer && o.details.toLowerCase().includes(c.customer.toLowerCase()));
+          if (customerOrders.length > 0) {
+            if (!c.totalOrders || c.totalOrders === 0) c.totalOrders = customerOrders.length;
+            if (!c.totalSpent || c.totalSpent === 0) c.totalSpent = customerOrders.reduce((s, o) => s + (o.revenue || 0), 0);
+            const latest = [...customerOrders].sort((a, b) => (b.date || '').localeCompare(a.date || ''))[0];
+            if (latest) {
+              if (!c.lastOrderDate) c.lastOrderDate = latest.date;
+              if (!c.lastProduct) c.lastProduct = latest.product;
+              if (!c.lastOrderId) c.lastOrderId = latest.orderId;
+              if (!c.region) c.region = latest.region;
+            }
+          }
+        });
       }
     }
 
@@ -1584,55 +1677,58 @@
     }
 
     const HEADER_MAP = {
-      "order date":"date","order id":"orderId","region":"region","product name":"product",
-      "pack size":"pack","units sold":"units","total revenue (pkr)":"revenue","total revenue":"revenue",
-      "payment method":"method","payment status":"status","remaining stock":"stock","stock left":"stock",
-      "rating":"rating","customer feedback":"feedback","customer details":"details",
+      "order date":"date","order id":"orderId","region":"region","product name":"product","product":"product",
+      "pack size":"pack","units sold":"units","units":"units","quantity":"units",
+      "total revenue (pkr)":"revenue","total revenue":"revenue","revenue":"revenue",
+      "sales (pkr)":"revenue","sales":"revenue","total sales (pkr)":"revenue","total sales":"revenue",
+      "payment method":"method","payment status":"status","remaining stock":"stock","stock left":"stock","stock":"stock",
+      "rating":"rating","customer feedback":"feedback","customer details":"details","customer":"details",
       "expenses":"expenses","expenses (pkr)":"expenses"
     };
 
     function parseGoogleSheetJson(json) {
-
       const cols = json.table.cols;
       const rows = json.table.rows;
-      const headers = cols.map(c => ((c && c.label) || '').trim().toLowerCase());
-      const hasExpenses = headers.some(h => h === 'expenses' || h === 'expenses (pkr)');
+      const { headers, startRow } = getActualHeaders(cols, rows);
       const parsedData = [];
 
-      for (const row of rows) {
+      for (let i = startRow; i < rows.length; i++) {
+        const row = rows[i];
         if (!row || !row.c) continue;
-        const obj = {};
+        if (row.c.every(c => !c || c.v === null || c.v === '')) continue;
+        const obj = { orderId: '', date: '', region: '', product: '', pack: '1000g', units: 0, revenue: 0, expenses: 0, status: '', details: '', stock: 0, rating: 5, feedback: '', method: '' };
+
         for (let j = 0; j < headers.length; j++) {
-          const header = headers[j];
+          const rawHeader = headers[j];
           const cell = row.c[j];
-          const val = cell ? cell.v : '';
-          const fVal = cell ? cell.f : '';
-          const key = HEADER_MAP[header] || header.replace(/[^a-zA-Z0-9]+(.)/g, (m, chr)=>chr.toUpperCase()).replace(/[^a-zA-Z0-9]/g, '');
+          if (!cell) continue;
+          const val = cell.v !== null ? cell.v : '';
+          const fVal = cell.f || '';
+          
+          let key = HEADER_MAP[rawHeader];
+          if (!key) {
+            for (const [pattern, targetKey] of Object.entries(HEADER_MAP)) {
+              if (rawHeader.includes(pattern.replace(/[^a-z0-9]/g, ''))) {
+                key = targetKey;
+                break;
+              }
+            }
+          }
+          if (!key) key = rawHeader.replace(/[^a-zA-Z0-9]+(.)/g, (m, chr)=>chr.toUpperCase()).replace(/[^a-zA-Z0-9]/g, '');
 
           if (['units','revenue','stock','rating','expenses'].includes(key)) {
-            if (cell && typeof cell.v === 'number') {
-              obj[key] = cell.v;
-            } else {
-              obj[key] = parseFloat(String(val).replace(/[^0-9.-]/g, '')) || 0;
-            }
+            obj[key] = typeof val === 'number' ? val : (parseFloat(String(val).replace(/[^0-9.-]/g, '')) || 0);
           } else if (key === 'date') {
-            if (cell && typeof cell.v === 'string' && cell.v.startsWith('Date(')) {
-              const match = cell.v.match(/Date\((\d+),(\d+),(\d+)\)/);
-              if (match) {
-                obj[key] = match[1] + '-' + String(Number(match[2]) + 1).padStart(2, '0') + '-' + String(Number(match[3])).padStart(2, '0');
-              } else {
-                obj[key] = formatDate(fVal || String(val));
-              }
-            } else {
-              obj[key] = formatDate(fVal || String(val));
-            }
+            obj[key] = cellDate(cell);
           } else {
-            obj[key] = cell && cell.v !== null ? String(cell.v) : '';
+            obj[key] = val !== null ? String(val).trim() : '';
           }
         }
         
-        obj.netRevenue = obj.revenue - (obj.expenses || 0);
-        if (obj.orderId) parsedData.push(obj);
+        obj.revenue = obj.revenue || 0;
+        obj.expenses = obj.expenses || 0;
+        obj.netRevenue = obj.revenue - obj.expenses;
+        if (obj.orderId || obj.product || obj.revenue > 0) parsedData.push(obj);
       }
       return parsedData;
     }
