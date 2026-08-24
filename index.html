@@ -1411,12 +1411,7 @@
     const fmtPKR = n => "₨" + Math.round(n).toLocaleString("en-PK");
     const fmtNum = n => Math.round(n).toLocaleString("en-PK");
 
-    ;
-      const num = parseInt(order.orderId.replace(/\D/g, '')) || 100;
-      const names = regionNames[order.region] || regionNames["Punjab"];
-      const idx = (num - 100) % names.length;
-      return names[idx] + " (" + order.region + ")";
-    }
+
 
 
     
@@ -1475,113 +1470,74 @@
     /* ==========================================================================
        DATA FETCH & LOOP
        ========================================================================== */
-    let sheetsData = {
-      operations: null,
-      expense: null,
-      stock: null,
-      followup: null
-    };
-
-    // Guard: prevent a new fetch from starting while one is still in-flight
+    // Guard: prevent concurrent fetches
     let isFetching = false;
 
-    function checkAllSheetsLoaded() {
-      if (sheetsData.operations !== null &&
-          sheetsData.expense !== null &&
-          sheetsData.stock !== null &&
-          sheetsData.followup !== null) {
+    // ---- CSV Fetch ----
 
-        // All 4 sheets have responded — allow next fetch cycle
-        isFetching = false;
-
-        const syncDot = document.getElementById("syncDot");
-        const syncText = document.getElementById("syncText");
-
-        // Parse operations
-        if (sheetsData.operations && sheetsData.operations !== "fallback") {
-          rawData = parseGoogleSheetJson(sheetsData.operations);
-        }
-
-        // Parse expense
-        if (sheetsData.expense && sheetsData.expense !== "fallback") {
-          expenseSheetData = parseExpenseSheetJson(sheetsData.expense);
-        }
-
-        // Parse stock
-        if (sheetsData.stock && sheetsData.stock !== "fallback") {
-          stockSheetData = parseStockSheetJson(sheetsData.stock);
-        }
-
-        // Parse followup
-        if (sheetsData.followup && sheetsData.followup !== "fallback") {
-          followupSheetData = parseFollowupSheetJson(sheetsData.followup);
-        }
-
-        const allLiveSucceeded =
-          sheetsData.operations && sheetsData.operations !== "fallback" &&
-          sheetsData.expense   && sheetsData.expense   !== "fallback" &&
-          sheetsData.stock     && sheetsData.stock     !== "fallback" &&
-          sheetsData.followup  && sheetsData.followup  !== "fallback";
-
-        const anyLiveSucceeded =
-          sheetsData.operations !== "fallback" ||
-          sheetsData.expense    !== "fallback" ||
-          sheetsData.stock      !== "fallback" ||
-          sheetsData.followup   !== "fallback";
-
-        if (allLiveSucceeded) {
-          syncDot.className = "status-dot live";
-          syncDot.style.backgroundColor = "";
-          syncText.innerHTML = `Live Connected <small style="opacity:.6;font-size:10px;">&#8635;</small>`;
-        } else if (anyLiveSucceeded) {
-          syncDot.className = "status-dot live";
-          syncDot.style.backgroundColor = "var(--pbi-yellow)";
-          syncText.innerHTML = `Live Connected (Partial)`;
+    function parseCSVText(csvText) {
+      // Parses raw CSV text into array of row arrays
+      const result = [];
+      let row = [''];
+      let inQuotes = false;
+      for (let i = 0; i < csvText.length; i++) {
+        const c = csvText[i];
+        const next = csvText[i + 1];
+        if (c === '"') {
+          if (inQuotes && next === '"') { row[row.length - 1] += '"'; i++; }
+          else { inQuotes = !inQuotes; }
+        } else if (c === ',' && !inQuotes) {
+          row.push('');
+        } else if ((c === '\r' || c === '\n') && !inQuotes) {
+          if (c === '\r' && next === '\n') i++;
+          if (row.length > 1 || row[0] !== '') result.push(row);
+          row = [''];
         } else {
-          syncDot.className = "status-dot error";
-          syncDot.style.backgroundColor = "";
-          syncText.innerHTML = `Sync Failed — Make Sheet Public!`;
-          // Alert the user once that their sheet is private
-          if (!window.hasAlertedAuthError) {
-            window.hasAlertedAuthError = true;
-            alert("Error: Could not connect to the Google Sheet!\n\nThis happens because the sheet is private. You MUST click 'Share' in Google Sheets and change General Access to 'Anyone with the link can view' for the live sync to work.");
-          }
+          row[row.length - 1] += c;
         }
-
-        // Repopulate filters then re-render ALL tabs so every tab is up to date
-        populateFilterDropdowns(rawData);
-        renderAll();
       }
+      if (row.length > 1 || row[0] !== '') result.push(row);
+      return result;
     }
 
-    // JSONP callbacks
-    window.handleOperationsData = function(json) {
-      sheetsData.operations = json;
-      const s = document.getElementById("jsonpSyncScript_operations");
-      if (s) s.remove();
-      checkAllSheetsLoaded();
-    };
-    window.handleExpenseData = function(json) {
-      sheetsData.expense = json;
-      const s = document.getElementById("jsonpSyncScript_expense");
-      if (s) s.remove();
-      checkAllSheetsLoaded();
-    };
-    window.handleStockData = function(json) {
-      sheetsData.stock = json;
-      const s = document.getElementById("jsonpSyncScript_stock");
-      if (s) s.remove();
-      checkAllSheetsLoaded();
-    };
-    window.handleFollowupData = function(json) {
-      sheetsData.followup = json;
-      const s = document.getElementById("jsonpSyncScript_followup");
-      if (s) s.remove();
-      checkAllSheetsLoaded();
-    };
+    function csvToJsonTable(csvText) {
+      // Converts CSV text into the same {table:{cols,rows}} structure that gviz/tq returns
+      const rows = parseCSVText(csvText);
+      if (rows.length === 0) return null;
+      const headerRow = rows[0];
+      const cols = headerRow.map(h => ({ label: h.trim(), type: 'string' }));
+      const dataRows = rows.slice(1).map(row => {
+        const c = headerRow.map((_, j) => {
+          const raw = (row[j] || '').trim();
+          if (raw === '') return null;
+          // Try to parse as number
+          const asNum = parseFloat(raw.replace(/[^0-9.-]/g, ''));
+          if (!isNaN(asNum) && raw.replace(/[^0-9.-]/g, '') === raw.replace(/\s/g,'')) {
+            return { v: asNum, f: raw };
+          }
+          // Try to parse as date
+          const dateMatch = raw.match(/^(\d{1,2})[\/-](\d{1,2})[\/-](\d{2,4})$/);
+          if (dateMatch) {
+            const [, d, m, y] = dateMatch;
+            const year = y.length === 2 ? '20' + y : y;
+            return { v: `${year}-${m.padStart(2,'0')}-${d.padStart(2,'0')}`, f: raw };
+          }
+          return { v: raw, f: raw };
+        });
+        return { c };
+      }).filter(r => r.c.some(c => c !== null));
+      return { table: { cols, rows: dataRows } };
+    }
 
-    function fetchAllData() {
-      // Skip if a fetch cycle is still in-flight (prevents DOM flooding)
+    async function fetchSheetCSV(gid) {
+      const url = `https://docs.google.com/spreadsheets/d/${GOOGLE_SHEET_ID}/export?format=csv&gid=${gid}&t=${Date.now()}`;
+      const resp = await fetch(url);
+      if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+      const text = await resp.text();
+      return csvToJsonTable(text);
+    }
+
+    async function fetchAllData() {
       if (isFetching) return;
       isFetching = true;
 
@@ -1591,53 +1547,36 @@
       syncDot.style.backgroundColor = "";
       syncText.textContent = "Syncing live...";
 
-      // Reset tracker so all 4 must respond before rendering
-      sheetsData = { operations: null, expense: null, stock: null, followup: null };
+      try {
+        const [opsJson, expJson, stkJson, flwJson] = await Promise.all([
+          fetchSheetCSV(TAB_GIDS.operations),
+          fetchSheetCSV(TAB_GIDS.expense),
+          fetchSheetCSV(TAB_GIDS.stock),
+          fetchSheetCSV(TAB_GIDS.followup)
+        ]);
 
-      const sheetId = GOOGLE_SHEET_ID;
+        if (opsJson) rawData = parseGoogleSheetJson(opsJson);
+        if (expJson) expenseSheetData = parseExpenseSheetJson(expJson);
+        if (stkJson) stockSheetData = parseStockSheetJson(stkJson);
+        if (flwJson) followupSheetData = parseFollowupSheetJson(flwJson);
 
-      const targets = [
-        { name: "operations", gid: TAB_GIDS.operations, callback: "handleOperationsData" },
-        { name: "expense",    gid: TAB_GIDS.expense,    callback: "handleExpenseData" },
-        { name: "stock",      gid: TAB_GIDS.stock,      callback: "handleStockData" },
-        { name: "followup",   gid: TAB_GIDS.followup,   callback: "handleFollowupData" }
-      ];
-
-      // Safety: if sheets don't all respond in 15s, mark remainder as fallback
-      const timeoutId = setTimeout(() => {
-        let timedOut = false;
-        ["operations","expense","stock","followup"].forEach(name => {
-          if (sheetsData[name] === null) {
-            sheetsData[name] = "fallback";
-            timedOut = true;
-          }
-        });
-        if (timedOut) checkAllSheetsLoaded();
-      }, 15000);
-
-      targets.forEach(t => {
-        // Remove any previous script tag for this target
-        const old = document.getElementById(`jsonpSyncScript_${t.name}`);
-        if (old) old.remove();
-
-        const script = document.createElement("script");
-        script.id = `jsonpSyncScript_${t.name}`;
-        
-        // Cache Busting: Use reqId in tqx and append a random tq query string and time parameter
-        const uniqueId = Date.now() + Math.floor(Math.random() * 100000);
-        const cacheBustingTq = encodeURIComponent(`select * limit 100000 offset 0`);
-        script.src = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=responseHandler:${t.callback};reqId:${uniqueId}&tq=${cacheBustingTq}&gid=${t.gid}&_cacheBust=${uniqueId}`;
-        
-        script.onerror = () => {
-          console.warn(`JSONP failed for ${t.name}, using fallback.`);
-          sheetsData[t.name] = "fallback";
-          const el = document.getElementById(`jsonpSyncScript_${t.name}`);
-          if (el) el.remove();
-          clearTimeout(timeoutId);
-          checkAllSheetsLoaded();
-        };
-        document.body.appendChild(script);
-      });
+        syncDot.className = "status-dot live";
+        syncDot.style.backgroundColor = "";
+        syncText.innerHTML = `Live Connected <small style="opacity:.6;font-size:10px;">&#8635;</small>`;
+      } catch(err) {
+        console.error('Sheet fetch error:', err);
+        syncDot.className = "status-dot error";
+        syncDot.style.backgroundColor = "";
+        syncText.innerHTML = `Sync Failed — Make Sheet Public!`;
+        if (!window.hasAlertedAuthError) {
+          window.hasAlertedAuthError = true;
+          alert("Could not load Google Sheet data.\n\nPlease make sure your Google Sheet is shared publicly (Share → Anyone with the link → Viewer).");
+        }
+      } finally {
+        isFetching = false;
+        populateFilterDropdowns(rawData);
+        renderAll();
+      }
     }
 
     function rowHasHeaderKeywords(row) {
@@ -1650,7 +1589,45 @@
       });
     }
 
+
+    function formatDate(dateStr) {
+      if (!dateStr) return '';
+      dateStr = String(dateStr).trim();
+      if (/^\d+(\.\d+)?$/.test(dateStr)) {
+        const serial = parseFloat(dateStr);
+        const d = new Date(Math.round((serial - 25569) * 86400 * 1000));
+        if (!isNaN(d.getTime())) {
+          return `${d.getUTCFullYear()}-${String(d.getUTCMonth()+1).padStart(2,'0')}-${String(d.getUTCDate()).padStart(2,'0')}`;
+        }
+      }
+      if (/^\d{4}-\d{2}-\d{2}$/.test(dateStr)) return dateStr;
+      const dMmmMatch = dateStr.match(/^(\d+)-([A-Za-z]+)$/);
+      if (dMmmMatch) {
+        const day = parseInt(dMmmMatch[1], 10);
+        const monthStr = dMmmMatch[2].toLowerCase();
+        const months = { jan:'01',feb:'02',mar:'03',apr:'04',may:'05',jun:'06',jul:'07',aug:'08',sep:'09',oct:'10',nov:'11',dec:'12' };
+        const month = months[monthStr.substring(0,3)] || '01';
+        return `2026-${month}-${day < 10 ? '0'+day : day}`;
+      }
+      try {
+        const d = new Date(dateStr);
+        if (!isNaN(d.getTime())) {
+          return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+        }
+      } catch(e) {}
+      return dateStr;
+    }
+
+    const HEADER_MAP = {
+      "order date":"date","order id":"orderId","region":"region","product name":"product",
+      "pack size":"pack","units sold":"units","total revenue (pkr)":"revenue","total revenue":"revenue",
+      "payment method":"method","payment status":"status","remaining stock":"stock","stock left":"stock",
+      "rating":"rating","customer feedback":"feedback","customer details":"details",
+      "expenses":"expenses","expenses (pkr)":"expenses"
+    };
+
     function parseGoogleSheetJson(json) {
+
       const cols = json.table.cols;
       const rows = json.table.rows;
       const headers = cols.map(c => ((c && c.label) || '').trim().toLowerCase());
