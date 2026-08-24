@@ -1473,68 +1473,34 @@
     // Guard: prevent concurrent fetches
     let isFetching = false;
 
-    // ---- CSV Fetch ----
+    function fetchSheetJSONP(gid) {
+      return new Promise((resolve, reject) => {
+        const callbackName = 'gviz_cb_' + Math.random().toString(36).substring(2, 9) + '_' + Date.now();
+        const script = document.createElement('script');
+        const timer = setTimeout(() => {
+          cleanup();
+          reject(new Error('Timeout loading sheet gid: ' + gid));
+        }, 15000);
 
-    function parseCSVText(csvText) {
-      // Parses raw CSV text into array of row arrays
-      const result = [];
-      let row = [''];
-      let inQuotes = false;
-      for (let i = 0; i < csvText.length; i++) {
-        const c = csvText[i];
-        const next = csvText[i + 1];
-        if (c === '"') {
-          if (inQuotes && next === '"') { row[row.length - 1] += '"'; i++; }
-          else { inQuotes = !inQuotes; }
-        } else if (c === ',' && !inQuotes) {
-          row.push('');
-        } else if ((c === '\r' || c === '\n') && !inQuotes) {
-          if (c === '\r' && next === '\n') i++;
-          if (row.length > 1 || row[0] !== '') result.push(row);
-          row = [''];
-        } else {
-          row[row.length - 1] += c;
+        function cleanup() {
+          clearTimeout(timer);
+          try { delete window[callbackName]; } catch(e) {}
+          if (script.parentNode) script.parentNode.removeChild(script);
         }
-      }
-      if (row.length > 1 || row[0] !== '') result.push(row);
-      return result;
-    }
 
-    function csvToJsonTable(csvText) {
-      // Converts CSV text into the same {table:{cols,rows}} structure that gviz/tq returns
-      const rows = parseCSVText(csvText);
-      if (rows.length === 0) return null;
-      const headerRow = rows[0];
-      const cols = headerRow.map(h => ({ label: h.trim(), type: 'string' }));
-      const dataRows = rows.slice(1).map(row => {
-        const c = headerRow.map((_, j) => {
-          const raw = (row[j] || '').trim();
-          if (raw === '') return null;
-          // Try to parse as number
-          const asNum = parseFloat(raw.replace(/[^0-9.-]/g, ''));
-          if (!isNaN(asNum) && raw.replace(/[^0-9.-]/g, '') === raw.replace(/\s/g,'')) {
-            return { v: asNum, f: raw };
-          }
-          // Try to parse as date
-          const dateMatch = raw.match(/^(\d{1,2})[\/-](\d{1,2})[\/-](\d{2,4})$/);
-          if (dateMatch) {
-            const [, d, m, y] = dateMatch;
-            const year = y.length === 2 ? '20' + y : y;
-            return { v: `${year}-${m.padStart(2,'0')}-${d.padStart(2,'0')}`, f: raw };
-          }
-          return { v: raw, f: raw };
-        });
-        return { c };
-      }).filter(r => r.c.some(c => c !== null));
-      return { table: { cols, rows: dataRows } };
-    }
+        window[callbackName] = function(json) {
+          cleanup();
+          resolve(json);
+        };
 
-    async function fetchSheetCSV(gid) {
-      const url = `https://docs.google.com/spreadsheets/d/${GOOGLE_SHEET_ID}/export?format=csv&gid=${gid}&t=${Date.now()}`;
-      const resp = await fetch(url);
-      if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
-      const text = await resp.text();
-      return csvToJsonTable(text);
+        script.onerror = function() {
+          cleanup();
+          reject(new Error('Script load error for gid: ' + gid));
+        };
+
+        script.src = `https://docs.google.com/spreadsheets/d/${GOOGLE_SHEET_ID}/gviz/tq?tqx=responseHandler:${callbackName}&gid=${gid}&_cacheBust=${Date.now()}`;
+        document.head.appendChild(script);
+      });
     }
 
     async function fetchAllData() {
@@ -1543,16 +1509,16 @@
 
       const syncDot = document.getElementById("syncDot");
       const syncText = document.getElementById("syncText");
-      syncDot.className = "status-dot syncing";
-      syncDot.style.backgroundColor = "";
-      syncText.textContent = "Syncing live...";
+      if (syncDot) syncDot.className = "status-dot syncing";
+      if (syncDot) syncDot.style.backgroundColor = "";
+      if (syncText) syncText.textContent = "Syncing live...";
 
       try {
         const [opsJson, expJson, stkJson, flwJson] = await Promise.all([
-          fetchSheetCSV(TAB_GIDS.operations),
-          fetchSheetCSV(TAB_GIDS.expense),
-          fetchSheetCSV(TAB_GIDS.stock),
-          fetchSheetCSV(TAB_GIDS.followup)
+          fetchSheetJSONP(TAB_GIDS.operations),
+          fetchSheetJSONP(TAB_GIDS.expense),
+          fetchSheetJSONP(TAB_GIDS.stock),
+          fetchSheetJSONP(TAB_GIDS.followup)
         ]);
 
         if (opsJson) rawData = parseGoogleSheetJson(opsJson);
@@ -1560,18 +1526,18 @@
         if (stkJson) stockSheetData = parseStockSheetJson(stkJson);
         if (flwJson) followupSheetData = parseFollowupSheetJson(flwJson);
 
-        syncDot.className = "status-dot live";
-        syncDot.style.backgroundColor = "";
-        syncText.innerHTML = `Live Connected <small style="opacity:.6;font-size:10px;">&#8635;</small>`;
+        if (syncDot) {
+          syncDot.className = "status-dot live";
+          syncDot.style.backgroundColor = "";
+        }
+        if (syncText) syncText.innerHTML = `Live Connected <small style="opacity:.6;font-size:10px;">&#8635;</small>`;
       } catch(err) {
         console.error('Sheet fetch error:', err);
-        syncDot.className = "status-dot error";
-        syncDot.style.backgroundColor = "";
-        syncText.innerHTML = `Sync Failed — Make Sheet Public!`;
-        if (!window.hasAlertedAuthError) {
-          window.hasAlertedAuthError = true;
-          alert("Could not load Google Sheet data.\n\nPlease make sure your Google Sheet is shared publicly (Share → Anyone with the link → Viewer).");
+        if (syncDot) {
+          syncDot.className = "status-dot error";
+          syncDot.style.backgroundColor = "";
         }
+        if (syncText) syncText.innerHTML = `Sync Failed — Check Connection`;
       } finally {
         isFetching = false;
         populateFilterDropdowns(rawData);
@@ -2258,7 +2224,6 @@
             status: row.status
           });
         });
-      });
       }
 
       // Dynamically populate transport cost percentage options based on actual values in expenseRows
@@ -2605,7 +2570,8 @@
             phone: c.phone || "N/A"
           };
         });
-      
+      }
+
       followupRows.sort((a, b) => b.daysSince - a.daysSince);
 
       const filtered = followupRows.filter(r => {
