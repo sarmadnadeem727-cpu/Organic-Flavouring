@@ -1927,7 +1927,7 @@
 
       // Stock tab dropdowns
       populateSelect("stockProductFilter", products, "All Products");
-      const vendors = [...new Set(stockSheetData.map(s => s.vendor || "Lal Mirch Traders").concat(Object.values(VENDORS)))].filter(Boolean).sort();
+      const vendors = [...new Set(stockSheetData.map(s => s.vendor))].filter(Boolean).sort();
       populateSelect("stockVendorFilter", vendors, "All Vendors");
 
       // Follow-up tab dropdowns
@@ -1966,7 +1966,7 @@
       rawData.forEach(o => {
         if (seen.has(o.orderId)) return;
         seen.add(o.orderId);
-        const name = getCustomerName(o);
+        const name = o.details || "Unknown";
         customerOrderCounts[name] = (customerOrderCounts[name] || 0) + 1;
       });
 
@@ -1977,7 +1977,7 @@
         
         let matchCohort = true;
         if (cohortValue) {
-          const name = getCustomerName(o);
+          const name = o.details || "Unknown";
           const count = customerOrderCounts[name] || 0;
           if (cohortValue === "repeat") {
             matchCohort = count >= 2;
@@ -2083,7 +2083,7 @@
           labels: productsList,
           datasets: [{
             data: productsList.map(p => byProduct[p]),
-            backgroundColor: productsList.map(p => PRODUCT_COLORS[p] || "#2563eb"),
+            backgroundColor: productsList.map(p => (typeof PRODUCT_COLORS !== 'undefined' ? PRODUCT_COLORS[p] : null) || "#2563eb"),
             borderRadius: 4, maxBarThickness: 45
           }]
         },
@@ -2113,8 +2113,8 @@
         data: {
           labels: salesProducts,
           datasets: [
-            { label: "Sales", data: salesProducts.map(p => salesByProduct[p]), backgroundColor: salesProducts.map(p => (PRODUCT_COLORS[p] || "#2563eb") + "CC"), borderRadius: 4, maxBarThickness: 30 },
-            { label: "Expenses", data: salesProducts.map(p => expensesByProduct[p]), backgroundColor: salesProducts.map(p => (PRODUCT_COLORS[p] || "#2563eb") + "33"), borderRadius: 4, maxBarThickness: 30 }
+            { label: "Sales", data: salesProducts.map(p => salesByProduct[p]), backgroundColor: salesProducts.map(p => "#2563ebCC"), borderRadius: 4, maxBarThickness: 30 },
+            { label: "Expenses", data: salesProducts.map(p => expensesByProduct[p]), backgroundColor: salesProducts.map(p => "#2563eb33"), borderRadius: 4, maxBarThickness: 30 }
           ]
         },
         options: {
