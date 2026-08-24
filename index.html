@@ -1398,9 +1398,7 @@
        GLOBAL STATE & MOCK DATA
        ========================================================================== */
 
-    // Removed the hardcoded 75-row fallback CSV dataset.
-    // The dashboard will now show empty if it cannot fetch real data.
-    const FALLBACK_CSV = `Order Date,Order ID,Region,Product Name,Pack Size,Units Sold,Total Revenue (PKR),Payment Method,Payment Status,Remaining Stock,Rating,Customer Feedback,Customer Details`;
+    
 
     let rawData = [];
     let filteredData = [];
@@ -1413,40 +1411,7 @@
     const fmtPKR = n => "₨" + Math.round(n).toLocaleString("en-PK");
     const fmtNum = n => Math.round(n).toLocaleString("en-PK");
 
-    const PRODUCT_COLORS = {
-      "Red Chilli Powder": "#C7401F",
-      "Turmeric Powder": "#E3A315",
-      "Red Chilli Flakes": "#E8734A"
-    };
-
-    const EXPENSE_RATIOS = {
-      "Red Chilli Powder": 0.45,
-      "Turmeric Powder": 0.40,
-      "Red Chilli Flakes": 0.50
-    };
-
-    const TRANSPORT_RATIOS = {
-      "Punjab": 0.05,
-      "Sindh": 0.08,
-      "Islamabad": 0.04,
-      "KPK": 0.07,
-      "Balochistan": 0.10
-    };
-
-    const VENDORS = {
-      "Red Chilli Powder": "Lal Mirch Traders",
-      "Turmeric Powder": "Haldi Gold Farms",
-      "Red Chilli Flakes": "Spice Masters Co."
-    };
-
-    function getCustomerName(order) {
-      const regionNames = {
-        "Punjab": ["Ahmed", "Hassan", "Usman", "Bilal", "Kamran", "Farhan", "Zain", "Ali"],
-        "Sindh": ["Junaid", "Imran", "Naveed", "Waqar", "Asif", "Raheel"],
-        "Islamabad": ["Saad", "Omar", "Tariq", "Hamza", "Faisal"],
-        "KPK": ["Adnan", "Shahid", "Irfan", "Yasir", "Arif"],
-        "Balochistan": ["Rashid", "Dawood", "Sajid", "Mehmood"]
-      };
+    ;
       const num = parseInt(order.orderId.replace(/\D/g, '')) || 100;
       const names = regionNames[order.region] || regionNames["Punjab"];
       const idx = (num - 100) % names.length;
@@ -1454,101 +1419,7 @@
     }
 
 
-    /* ==========================================================================
-       VANILLA JAVASCRIPT CSV PARSER
-       ========================================================================== */
-    function parseCSV(csvText) {
-      const result = [];
-      let row = [""];
-      let inQuotes = false;
-      for (let i = 0; i < csvText.length; i++) {
-        const c = csvText[i];
-        const next = csvText[i + 1];
-        if (c === '"') {
-          if (inQuotes && next === '"') { row[row.length - 1] += '"'; i++; }
-          else { inQuotes = !inQuotes; }
-        } else if (c === ',' && !inQuotes) {
-          row.push('');
-        } else if ((c === '\r' || c === '\n') && !inQuotes) {
-          if (c === '\r' && next === '\n') i++;
-          result.push(row);
-          row = [''];
-        } else {
-          row[row.length - 1] += c;
-        }
-      }
-      if (row.length > 1 || row[0] !== '') result.push(row);
-      return result.filter(r => r.length > 1 || r[0] !== '');
-    }
-
-    function formatDate(dateStr) {
-      if (!dateStr) return '';
-      dateStr = dateStr.trim();
-      if (/^\d+(\.\d+)?$/.test(dateStr)) {
-        const serial = parseFloat(dateStr);
-        const d = new Date(Math.round((serial - 25569) * 86400 * 1000));
-        if (!isNaN(d.getTime())) {
-          return `${d.getUTCFullYear()}-${String(d.getUTCMonth()+1).padStart(2,'0')}-${String(d.getUTCDate()).padStart(2,'0')}`;
-        }
-      }
-      if (/^\d{4}-\d{2}-\d{2}$/.test(dateStr)) return dateStr;
-      const dMmmMatch = dateStr.match(/^(\d+)-([A-Za-z]+)$/);
-      if (dMmmMatch) {
-        const day = parseInt(dMmmMatch[1], 10);
-        const monthStr = dMmmMatch[2].toLowerCase();
-        const months = { jan:'01',feb:'02',mar:'03',apr:'04',may:'05',jun:'06',jul:'07',aug:'08',sep:'09',oct:'10',nov:'11',dec:'12' };
-        const month = months[monthStr.substring(0,3)] || '08';
-        const paddedDay = day < 10 ? '0'+day : ''+day;
-        return `2026-${month}-${paddedDay}`;
-      }
-      try {
-        const d = new Date(dateStr);
-        if (!isNaN(d.getTime())) {
-          return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
-        }
-      } catch(e) {}
-      return dateStr;
-    }
-
-    const HEADER_MAP = {
-      "order date":"date","order id":"orderId","region":"region","product name":"product",
-      "pack size":"pack","units sold":"units","total revenue (pkr)":"revenue","total revenue":"revenue",
-      "payment method":"method","payment status":"status","remaining stock":"stock","stock left":"stock",
-      "rating":"rating","customer feedback":"feedback","customer details":"details",
-      "expenses":"expenses","expenses (pkr)":"expenses"
-    };
-
-    function csvToObjects(csvText) {
-      const rows = parseCSV(csvText);
-      if (rows.length === 0) return [];
-      const headers = rows[0].map(h => h.trim().toLowerCase());
-      const hasExpenses = headers.some(h => h === 'expenses' || h === 'expenses (pkr)');
-      const parsedData = [];
-      for (let i = 1; i < rows.length; i++) {
-        const row = rows[i];
-        if (row.length === 1 && row[0] === '') continue;
-        const obj = {};
-        for (let j = 0; j < headers.length; j++) {
-          const header = headers[j];
-          const val = row[j] ? row[j].trim() : '';
-          const key = HEADER_MAP[header] || header.replace(/[^a-zA-Z0-9]+(.)/g, (m, chr)=>chr.toUpperCase()).replace(/[^a-zA-Z0-9]/g, '');
-          if (['units','revenue','stock','rating','expenses'].includes(key)) {
-            obj[key] = parseFloat(val.replace(/[^0-9.-]/g, '')) || 0;
-          } else if (key === 'date') {
-            obj[key] = formatDate(val);
-          } else {
-            obj[key] = val;
-          }
-        }
-        if (!hasExpenses) {
-          const ratio = EXPENSE_RATIOS[obj.product] || 0.45;
-          obj.expenses = Math.round(obj.revenue * ratio);
-        }
-        obj.netRevenue = obj.revenue - (obj.expenses || 0);
-        if (obj.orderId) parsedData.push(obj);
-      }
-      return parsedData;
-    }
+    
 
     /* ==========================================================================
        DATE PERIOD HELPERS
@@ -1629,8 +1500,6 @@
         // Parse operations
         if (sheetsData.operations && sheetsData.operations !== "fallback") {
           rawData = parseGoogleSheetJson(sheetsData.operations);
-        } else if (!rawData || rawData.length === 0) {
-          rawData = csvToObjects(FALLBACK_CSV);
         }
 
         // Parse expense
@@ -1819,10 +1688,7 @@
             obj[key] = cell && cell.v !== null ? String(cell.v) : '';
           }
         }
-        if (!hasExpenses) {
-          const ratio = EXPENSE_RATIOS[obj.product] || 0.45;
-          obj.expenses = Math.round(obj.revenue * ratio);
-        }
+        
         obj.netRevenue = obj.revenue - (obj.expenses || 0);
         if (obj.orderId) parsedData.push(obj);
       }
@@ -2415,25 +2281,7 @@
             status: row.status
           });
         });
-      } else {
-        const sorted = [...rawData].sort((a,b) => a.date.localeCompare(b.date));
-
-        sorted.forEach((o) => {
-          if (seen.has(o.orderId)) return;
-          seen.add(o.orderId);
-
-          const transportRatio = TRANSPORT_RATIOS[o.region] || 0.06;
-          const transportCost = Math.round(o.revenue * transportRatio);
-          const profit = o.revenue - o.expenses;
-          const netProfit = profit - transportCost;
-          accumProfit += netProfit;
-
-          expenseRows.push({
-            sr: expenseRows.length + 1, date: o.date, orderId: o.orderId, customer: getCustomerName(o), product: o.product,
-            region: o.region, quantity: o.units, expense: o.expenses, salePrice: o.revenue, profit: profit,
-            transportCost: transportCost, netProfit: netProfit, accumProfit: accumProfit, status: o.status
-          });
-        });
+      });
       }
 
       // Dynamically populate transport cost percentage options based on actual values in expenseRows
@@ -2613,45 +2461,7 @@
         });
       }
 
-      rawData.forEach(o => {
-        if (seen.has(o.orderId)) return;
-        seen.add(o.orderId);
-
-        if (!productMap[o.product]) {
-          productMap[o.product] = {
-            product: o.product,
-            qtyIn: o.stock + o.units,
-            vendor: VENDORS[o.product] || "Local Supplier",
-            retailPrice: o.expenses,
-            transportCharge: Math.round(o.revenue * (TRANSPORT_RATIOS[o.region] || 0.06)),
-            dateOut: o.date,
-            qtyOut: 0,
-            buyers: new Set(),
-            outSalePrice: 0,
-            remainingQty: 0,
-            profitMargin: 0,
-            paidCount: 0,
-            totalCount: 0,
-            remarks: []
-          };
-        }
-        const p = productMap[o.product];
-        
-        if (!stockSheetData || stockSheetData.length === 0) {
-          p.qtyIn = Math.max(p.qtyIn, o.stock + o.units);
-          p.retailPrice += o.expenses;
-          p.transportCharge += Math.round(o.revenue * (TRANSPORT_RATIOS[o.region] || 0.06));
-        }
-        
-        p.qtyOut += o.units;
-        p.outSalePrice += o.revenue;
-        p.buyers.add(getCustomerName(o).split(" (")[0]);
-        p.totalCount++;
-        if (o.status.toLowerCase() === 'paid') p.paidCount++;
-        if (o.date > p.dateOut) p.dateOut = o.date;
-      });
-
-      const stockRows = Object.values(productMap).map(p => {
+            const stockRows = Object.values(productMap).map(p => {
         p.remainingQty = Math.max(0, p.qtyIn - p.qtyOut);
         p.profitMargin = p.outSalePrice - p.retailPrice - p.transportCharge;
         p.payStatus = p.totalCount > 0 ? (p.paidCount === p.totalCount ? "Paid" : "Not Paid") : "N/A";
@@ -2765,8 +2575,7 @@
       makeChart("remainingStockChart", {
         type: "doughnut",
         data: {
-          labels: productNames,
-          datasets: [{ data: filtered.map(r => r.remainingQty), backgroundColor: productNames.map(p => PRODUCT_COLORS[p] || "#2563eb"), borderWidth: 1, borderColor: "rgba(0, 0, 0, 0.08)" }]
+          datasets: [{ data: filtered.map(r => r.remainingQty), backgroundColor: productNames.map(p => "#2563eb"), borderWidth: 1, borderColor: "rgba(0, 0, 0, 0.08)" }]
         },
         options: {
           responsive: true, maintainAspectRatio: false,
@@ -2819,52 +2628,7 @@
             phone: c.phone || "N/A"
           };
         });
-      } else {
-        const seen = new Set();
-        const customerMap = {};
-        rawData.forEach(o => {
-          if (seen.has(o.orderId)) return;
-          seen.add(o.orderId);
-
-          const customerName = getCustomerName(o);
-          if (!customerMap[customerName]) {
-            customerMap[customerName] = {
-              customer: customerName, region: o.region, orders: [], totalSpent: 0,
-              lastOrderDate: o.date, lastProduct: o.product, lastOrderId: o.orderId,
-              phone: o.details || "N/A"
-            };
-          }
-          const c = customerMap[customerName];
-          c.orders.push(o);
-          c.totalSpent += o.revenue;
-          if (o.date > c.lastOrderDate) {
-            c.lastOrderDate = o.date;
-            c.lastProduct = o.product;
-            c.lastOrderId = o.orderId;
-          }
-        });
-
-        followupRows = Object.values(customerMap).map(c => {
-          const lastDate = new Date(c.lastOrderDate);
-          const rawDays = Math.floor((today - lastDate) / (1000 * 60 * 60 * 24));
-          const daysSince = Math.max(0, rawDays);
-          let followupStatus, badgeClass;
-
-          if (daysSince >= 15) {
-            followupStatus = "CALL NOW — Overdue";
-            badgeClass = "urgent";
-          } else if (daysSince >= 10) {
-            followupStatus = "Due Soon";
-            badgeClass = "warning";
-          } else {
-            followupStatus = "Recent Order";
-            badgeClass = "ok";
-          }
-
-          return { ...c, totalOrders: c.orders.length, daysSince, followupStatus, badgeClass };
-        });
-      }
-
+      
       followupRows.sort((a, b) => b.daysSince - a.daysSince);
 
       const filtered = followupRows.filter(r => {
@@ -3302,9 +3066,7 @@
        INITIALIZATION
        ========================================================================== */
     // Immediately parse initial dataset and render dashboard so UI is instant and never blank
-    rawData = csvToObjects(FALLBACK_CSV);
-    populateFilterDropdowns(rawData);
-    renderAll();
+    
 
     // Fetch latest live data from Google Sheets immediately
     fetchAllData();
