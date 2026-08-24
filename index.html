@@ -614,6 +614,8 @@
       border: 1px solid rgba(0, 0, 0, 0.08);
       border-radius: 4px;
       margin-top: 8px;
+      width: 100%;
+      max-width: 100%;
     }
 
     table {
@@ -853,6 +855,10 @@
       gap: 20px;
     }
 
+    .followup-grid-split > * {
+      min-width: 0;
+    }
+
     @media (max-width: 1200px) {
       .followup-grid-split {
         grid-template-columns: 1fr;
@@ -888,52 +894,7 @@
   <!-- ========== MAIN SPA DASHBOARD CONTENT ========== -->
   <div class="dashboard-container" id="dashboardContainer">
     
-    <!-- Global Glassmorphic Slicers Ribbon -->
-    <div class="glass-card">
-      <div class="card-header-bar" style="border-bottom: none; margin-bottom: 0; padding-bottom: 0;">
-        <div class="pbi-filters">
-          <!-- Date Slicer Button Group -->
-          <div class="date-slicer-group">
-            <label>Date Period</label>
-            <div class="date-slicer-buttons" id="dateSlicer">
-              <button data-period="day" class="active">Day</button>
-              <button data-period="week">Week</button>
-              <button data-period="month">Month</button>
-              <button data-period="quarter">Quarter</button>
-              <button data-period="year">Year</button>
-            </div>
-          </div>
-          
-          <!-- Dynamic Slicers -->
-          <div class="filter-item">
-            <label for="regionFilter">Region Slicer</label>
-            <select id="regionFilter">
-              <option value="">All Regions</option>
-            </select>
-          </div>
-          <div class="filter-item">
-            <label for="productFilter">Product Slicer</label>
-            <select id="productFilter">
-              <option value="">All Products</option>
-            </select>
-          </div>
-          <div class="filter-item">
-            <label for="statusFilter">Payment Status</label>
-            <select id="statusFilter">
-              <option value="">All Statuses</option>
-            </select>
-          </div>
-          <div class="filter-item">
-            <label for="cohortFilter">Customer Cohort</label>
-            <select id="cohortFilter">
-              <option value="">All Customers</option>
-              <option value="repeat">Repeat Customers (2+ Orders)</option>
-              <option value="onetime">One-Time Customers</option>
-            </select>
-          </div>
-        </div>
-      </div>
-    </div>
+
 
     <!-- Sub-tab Selector -->
     <div class="tab-switcher">
@@ -947,6 +908,50 @@
          TAB 1: OPERATIONS OVERVIEW
          ================================================================ -->
     <div class="tab-panel active" id="panel-overview">
+      
+      <!-- Overview Slicers Ribbon -->
+      <div class="glass-card" style="margin-bottom: 20px;">
+        <div class="card-header-bar" style="border-bottom: none; margin-bottom: 0; padding-bottom: 0;">
+          <div class="pbi-filters">
+            <div class="date-slicer-group">
+              <label>Date Period</label>
+              <div class="date-slicer-buttons" id="overviewDateSlicer">
+                <button data-period="day" class="active">Day</button>
+                <button data-period="week">Week</button>
+                <button data-period="month">Month</button>
+                <button data-period="quarter">Quarter</button>
+                <button data-period="year">Year</button>
+              </div>
+            </div>
+            <div class="filter-item">
+              <label for="overviewRegionFilter">Region Slicer</label>
+              <select id="overviewRegionFilter">
+                <option value="">All Regions</option>
+              </select>
+            </div>
+            <div class="filter-item">
+              <label for="overviewProductFilter">Product Slicer</label>
+              <select id="overviewProductFilter">
+                <option value="">All Products</option>
+              </select>
+            </div>
+            <div class="filter-item">
+              <label for="overviewStatusFilter">Payment Status</label>
+              <select id="overviewStatusFilter">
+                <option value="">All Statuses</option>
+              </select>
+            </div>
+            <div class="filter-item">
+              <label for="overviewCohortFilter">Customer Cohort</label>
+              <select id="overviewCohortFilter">
+                <option value="">All Customers</option>
+                <option value="repeat">Repeat Customers (2+ Orders)</option>
+                <option value="onetime">One-Time Customers</option>
+              </select>
+            </div>
+          </div>
+        </div>
+      </div>
       
       <!-- Overview Metrics -->
       <div class="kpi-row" id="overviewKpiRow"></div>
@@ -1005,7 +1010,7 @@
                 <th data-key="region">Region</th>
                 <th data-key="product">Product Name</th>
                 <th data-key="pack">Pack Size</th>
-                <th data-key="units" class="num-align">Units Sold</th>
+                <th data-key="units" class="num-align">Units Sold (g)</th>
                 <th data-key="revenue" class="num-align">Sales (PKR)</th>
                 <th data-key="expenses" class="num-align">Expenses (PKR)</th>
                 <th data-key="netRevenue" class="num-align">Net Revenue (PKR)</th>
@@ -1027,6 +1032,48 @@
          TAB 2: EXPENSE VS PROFIT
          ================================================================ -->
     <div class="tab-panel" id="panel-expense">
+
+      <!-- Expense vs Profit Slicers Ribbon -->
+      <div class="glass-card" style="margin-bottom: 20px;">
+        <div class="card-header-bar" style="border-bottom: none; margin-bottom: 0; padding-bottom: 0;">
+          <div class="pbi-filters">
+            <div class="date-slicer-group">
+              <label>Date Period</label>
+              <div class="date-slicer-buttons" id="expenseDateSlicer">
+                <button data-period="day" class="active">Day</button>
+                <button data-period="week">Week</button>
+                <button data-period="month">Month</button>
+                <button data-period="quarter">Quarter</button>
+                <button data-period="year">Year</button>
+              </div>
+            </div>
+            <div class="filter-item">
+              <label for="expenseRegionFilter">Region Slicer</label>
+              <select id="expenseRegionFilter">
+                <option value="">All Regions</option>
+              </select>
+            </div>
+            <div class="filter-item">
+              <label for="expenseProductFilter">Product Slicer</label>
+              <select id="expenseProductFilter">
+                <option value="">All Products</option>
+              </select>
+            </div>
+            <div class="filter-item">
+              <label for="expenseTransportFilter">Transport Cost % Slicer</label>
+              <select id="expenseTransportFilter">
+                <option value="">All Transport Costs</option>
+              </select>
+            </div>
+            <div class="filter-item">
+              <label for="expenseStatusFilter">Payment Status</label>
+              <select id="expenseStatusFilter">
+                <option value="">All Statuses</option>
+              </select>
+            </div>
+          </div>
+        </div>
+      </div>
       <!-- KPIs -->
       <div class="kpi-row" id="expenseKpis"></div>
 
@@ -1090,6 +1137,44 @@
          TAB 3: STOCK MANAGEMENT
          ================================================================ -->
     <div class="tab-panel" id="panel-stock">
+
+      <!-- Stock Slicers Ribbon -->
+      <div class="glass-card" style="margin-bottom: 20px;">
+        <div class="card-header-bar" style="border-bottom: none; margin-bottom: 0; padding-bottom: 0;">
+          <div class="pbi-filters">
+            <div class="date-slicer-group">
+              <label>Date Period</label>
+              <div class="date-slicer-buttons" id="stockDateSlicer">
+                <button data-period="day" class="active">Day</button>
+                <button data-period="week">Week</button>
+                <button data-period="month">Month</button>
+                <button data-period="quarter">Quarter</button>
+                <button data-period="year">Year</button>
+              </div>
+            </div>
+            <div class="filter-item">
+              <label for="stockProductFilter">Product Slicer</label>
+              <select id="stockProductFilter">
+                <option value="">All Products</option>
+              </select>
+            </div>
+            <div class="filter-item">
+              <label for="stockStatusFilter">Stock Status</label>
+              <select id="stockStatusFilter">
+                <option value="">All Stock Statuses</option>
+                <option value="low">Low Stock (< 20 Kgs)</option>
+                <option value="adequate">Adequate Stock (>= 20 Kgs)</option>
+              </select>
+            </div>
+            <div class="filter-item">
+              <label for="stockVendorFilter">Vendor Slicer</label>
+              <select id="stockVendorFilter">
+                <option value="">All Vendors</option>
+              </select>
+            </div>
+          </div>
+        </div>
+      </div>
       <!-- KPIs -->
       <div class="kpi-row" id="stockKpis"></div>
 
@@ -1163,6 +1248,29 @@
          TAB 4: CUSTOMER FOLLOW-UP
          ================================================================ -->
     <div class="tab-panel" id="panel-followup">
+
+      <!-- Follow-up Slicers Ribbon -->
+      <div class="glass-card" style="margin-bottom: 20px;">
+        <div class="card-header-bar" style="border-bottom: none; margin-bottom: 0; padding-bottom: 0;">
+          <div class="pbi-filters">
+            <div class="filter-item">
+              <label for="followupRegionFilter">Region Slicer</label>
+              <select id="followupRegionFilter">
+                <option value="">All Regions</option>
+              </select>
+            </div>
+            <div class="filter-item">
+              <label for="followupStatusFilter">Follow-up Status</label>
+              <select id="followupStatusFilter">
+                <option value="">All Follow-up Statuses</option>
+                <option value="call">Call Now (Overdue)</option>
+                <option value="soon">Due Soon</option>
+                <option value="recent">Recent Order</option>
+              </select>
+            </div>
+          </div>
+        </div>
+      </div>
       <!-- KPIs -->
       <div class="kpi-row" id="followupKpis"></div>
 
@@ -1195,13 +1303,6 @@
               <span class="section-banner followup">Customer Follow-up Tracker</span>
             </div>
             <div class="table-actions">
-              <!-- Follow-up Status filter dropdown -->
-              <select id="followupStatusFilter">
-                <option value="">All Follow-up Statuses</option>
-                <option value="call">Call Now (Overdue)</option>
-                <option value="soon">Due Soon</option>
-                <option value="recent">Recent Order</option>
-              </select>
               <input type="text" id="followupSearch" placeholder="Search customer, product, region...">
               <span id="followupRowCount" class="row-count-badge">0 rows</span>
             </div>
@@ -1275,38 +1376,29 @@
        ================================================================ -->
   <script>
     /* ==========================================================================
-       CONFIG & GLOBAL STATE
+       USER CONFIGURATION — LIVE SHEET SETTINGS
        ========================================================================== */
-    // Using Visualization Query API endpoint to completely bypass Google Sheets CDN cache
-    const GOOGLE_SHEETS_CSV_URL = "https://docs.google.com/spreadsheets/d/1LJX3W405oTxyRluiBnQ0y8AHGCaoLCf8/gviz/tq?tqx=out:csv";
+    // Change this to your own Google Sheet ID (found in the URL of your sheet)
+    const GOOGLE_SHEET_ID = "1LJX3W405oTxyRluiBnQ0y8AHGCaoLCf8";
 
-    // 75-row fallback CSV dataset representing August 2026 data
-    const FALLBACK_CSV = `Order Date,Order ID,Region,Product Name,Pack Size,Units Sold,Total Revenue (PKR),Payment Method,Payment Status,Remaining Stock,Rating,Customer Feedback,Customer Details
-1-Aug,ORD-101,Punjab,Red Chilli Powder,250g,5,3000,COD,Receivable,145,4,Good packaging,0333-1234567
-2-Aug,ORD-102,Sindh,Turmeric Powder,500g,2,2000,Online - JazzCash,Paid,88,5,Pure haldi color,0345-7654321
-3-Aug,ORD-103,Islamabad,Red Chilli Flakes,100g,10,2800,Online - Card,Paid,190,5,Very fresh,0321-9876543
-4-Aug,ORD-104,KPK,Red Chilli Powder,1000g,1,2300,COD,Paid,42,3,Late delivery,0312-3456789
-5-Aug,ORD-105,Balochistan,Turmeric Powder,100g,8,1760,Online - EasyPaisa,Paid,290,4,Smells great,0300-1122334
-6-Aug,ORD-106,Punjab,Red Chilli Flakes,500g,3,3750,COD,Receivable,67,5,Perfect for pizza,0333-2233445
-7-Aug,ORD-107,Sindh,Turmeric Powder,1000g,2,3800,COD,Paid,38,5,Excellent quality,0345-3344556
-8-Aug,ORD-108,Punjab,Red Chilli Powder,50g,20,3000,Online - Card,Paid,410,4,Nice aroma,0321-4455667
-9-Aug,ORD-109,Islamabad,Red Chilli Flakes,250g,5,3250,COD,Receivable,115,2,Seal was broken,0312-5566778
-10-Aug,ORD-110,KPK,Turmeric Powder,250g,6,3000,Online - JazzCash,Paid,180,5,Very authentic,0300-6677889
-11-Aug,ORD-111,Punjab,Red Chilli Powder,100g,15,3900,COD,Paid,260,4,Good taste,0333-7788990
-12-Aug,ORD-112,Sindh,Red Chilli Flakes,50g,25,4000,Online - EasyPaisa,Paid,380,5,Highly recommended,0345-8899001
-13-Aug,ORD-113,Balochistan,Turmeric Powder,500g,4,4000,COD,Receivable,84,4,Good color,0321-9900112
-14-Aug,ORD-114,Punjab,Red Chilli Powder,500g,3,3450,Online - Card,Paid,75,5,Strong heat,0312-0011223
-15-Aug,ORD-115,Islamabad,Red Chilli Flakes,1000g,1,2400,COD,Receivable,25,3,Average packing,0300-2233441
-16-Aug,ORD-116,KPK,Turmeric Powder,50g,30,3600,COD,Paid,450,5,Best organic haldi,0333-3344552
-17-Aug,ORD-117,Punjab,Red Chilli Powder,250g,8,4800,Online - JazzCash,Paid,137,5,Very spicy,0345-4455663
-18-Aug,ORD-118,Sindh,Red Chilli Flakes,100g,12,3360,COD,Receivable,178,4,Good value,0321-5566774
-19-Aug,ORD-119,Islamabad,Turmeric Powder,1000g,3,5700,Online - Card,Paid,35,5,Premium quality,0312-6677885
-20-Aug,ORD-120,Balochistan,Red Chilli Powder,1000g,2,4600,COD,Paid,40,4,Authentic taste,0300-7788996
-21-Aug,ORD-121,Punjab,Red Chilli Flakes,250g,6,3900,Online - EasyPaisa,Paid,109,5,Perfect flakes,0333-8899007
-22-Aug,ORD-122,Sindh,Turmeric Powder,250g,10,5000,COD,Receivable,170,2,Did not like smell,0345-9900118
-23-Aug,ORD-123,KPK,Red Chilli Powder,50g,25,3750,Online - JazzCash,Paid,385,5,Great for daily use,0321-0011229
-24-Aug,ORD-124,Punjab,Red Chilli Flakes,500g,4,5000,COD,Paid,63,4,Very hot,0312-1122330
-25-Aug,ORD-125,Islamabad,Turmeric Powder,100g,20,4400,Online - Card,Paid,270,5,Will buy again`;
+    // Tab GIDs (found in the URL of each tab as #gid=...)
+    const TAB_GIDS = {
+      operations: "1734037466",
+      expense: "964921241",
+      stock: "1665727063",
+      followup: "1100782136"
+    };
+
+    // The polling interval in milliseconds (default: 10000ms = 10 seconds)
+    const SYNC_INTERVAL_MS = 10000;
+
+    /* ==========================================================================
+       GLOBAL STATE & MOCK DATA
+       ========================================================================== */
+
+    // Removed the hardcoded 75-row fallback CSV dataset.
+    // The dashboard will now show empty if it cannot fetch real data.
+    const FALLBACK_CSV = `Order Date,Order ID,Region,Product Name,Pack Size,Units Sold,Total Revenue (PKR),Payment Method,Payment Status,Remaining Stock,Rating,Customer Feedback,Customer Details`;
 
     let rawData = [];
     let filteredData = [];
@@ -1535,21 +1627,24 @@
         // Parse operations
         if (sheetsData.operations && sheetsData.operations !== "fallback") {
           rawData = parseGoogleSheetJson(sheetsData.operations);
-        } else {
+        } else if (!rawData || rawData.length === 0) {
           rawData = csvToObjects(FALLBACK_CSV);
         }
 
         // Parse expense
-        expenseSheetData = (sheetsData.expense && sheetsData.expense !== "fallback")
-          ? parseExpenseSheetJson(sheetsData.expense) : [];
+        if (sheetsData.expense && sheetsData.expense !== "fallback") {
+          expenseSheetData = parseExpenseSheetJson(sheetsData.expense);
+        }
 
         // Parse stock
-        stockSheetData = (sheetsData.stock && sheetsData.stock !== "fallback")
-          ? parseStockSheetJson(sheetsData.stock) : [];
+        if (sheetsData.stock && sheetsData.stock !== "fallback") {
+          stockSheetData = parseStockSheetJson(sheetsData.stock);
+        }
 
         // Parse followup
-        followupSheetData = (sheetsData.followup && sheetsData.followup !== "fallback")
-          ? parseFollowupSheetJson(sheetsData.followup) : [];
+        if (sheetsData.followup && sheetsData.followup !== "fallback") {
+          followupSheetData = parseFollowupSheetJson(sheetsData.followup);
+        }
 
         const allLiveSucceeded =
           sheetsData.operations && sheetsData.operations !== "fallback" &&
@@ -1574,12 +1669,17 @@
         } else {
           syncDot.className = "status-dot error";
           syncDot.style.backgroundColor = "";
-          syncText.innerHTML = `Sync Failed — Local Fallback`;
+          syncText.innerHTML = `Sync Failed — Make Sheet Public!`;
+          // Alert the user once that their sheet is private
+          if (!window.hasAlertedAuthError) {
+            window.hasAlertedAuthError = true;
+            alert("Error: Could not connect to the Google Sheet!\n\nThis happens because the sheet is private. You MUST click 'Share' in Google Sheets and change General Access to 'Anyone with the link can view' for the live sync to work.");
+          }
         }
 
         // Repopulate filters then re-render ALL tabs so every tab is up to date
         populateFilterDropdowns(rawData);
-        applyFilters(); // applyFilters calls renderAll() internally
+        renderAll();
       }
     }
 
@@ -1623,14 +1723,13 @@
       // Reset tracker so all 4 must respond before rendering
       sheetsData = { operations: null, expense: null, stock: null, followup: null };
 
-      const sheetIdMatch = GOOGLE_SHEETS_CSV_URL.match(/\/d\/([a-zA-Z0-9-_]+)/);
-      const sheetId = sheetIdMatch ? sheetIdMatch[1] : "1LJX3W405oTxyRluiBnQ0y8AHGCaoLCf8";
+      const sheetId = GOOGLE_SHEET_ID;
 
       const targets = [
-        { name: "operations", gid: "1734037466", callback: "handleOperationsData" },
-        { name: "expense",    gid: "964921241",  callback: "handleExpenseData" },
-        { name: "stock",      gid: "1665727063", callback: "handleStockData" },
-        { name: "followup",   gid: "1100782136", callback: "handleFollowupData" }
+        { name: "operations", gid: TAB_GIDS.operations, callback: "handleOperationsData" },
+        { name: "expense",    gid: TAB_GIDS.expense,    callback: "handleExpenseData" },
+        { name: "stock",      gid: TAB_GIDS.stock,      callback: "handleStockData" },
+        { name: "followup",   gid: TAB_GIDS.followup,   callback: "handleFollowupData" }
       ];
 
       // Safety: if sheets don't all respond in 15s, mark remainder as fallback
@@ -1652,7 +1751,12 @@
 
         const script = document.createElement("script");
         script.id = `jsonpSyncScript_${t.name}`;
-        script.src = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=responseHandler:${t.callback}&gid=${t.gid}&t=${Date.now()}`;
+        
+        // Cache Busting: Use reqId in tqx and append a random tq query string and time parameter
+        const uniqueId = Date.now() + Math.floor(Math.random() * 100000);
+        const cacheBustingTq = encodeURIComponent(`select * limit 100000 offset 0`);
+        script.src = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=responseHandler:${t.callback};reqId:${uniqueId}&tq=${cacheBustingTq}&gid=${t.gid}&_cacheBust=${uniqueId}`;
+        
         script.onerror = () => {
           console.warn(`JSONP failed for ${t.name}, using fallback.`);
           sheetsData[t.name] = "fallback";
@@ -1771,8 +1875,9 @@
       const { headers, startRow } = getActualHeaders(json.table.cols, json.table.rows);
       const rows = json.table.rows;
 
-      // Fuzzy column mapping — order matters (more specific first)
       const EXPENSE_PAIRS = [
+        ['date','date'],
+        ['orderid','orderId'],['order','orderId'],
         ['srno','sr'],['srnumber','sr'],['srnum','sr'],['no','sr'],
         ['customername','customer'],['customer','customer'],
         ['productname','product'],['product','product'],['item','product'],
@@ -1784,7 +1889,6 @@
         ['expense','expense'],['cost','expense'],
         ['profit','profit'],
         ['paymentstatus','status'],['payment','status'],['payemnt','status'],['status','status'],
-        ['date','date'],
       ];
 
       const keys = headers.map(h => fuzzyMap(h, EXPENSE_PAIRS));
@@ -1795,7 +1899,7 @@
         if (!row || !row.c) continue;
         if (row.c.every(c => !c || c.v === null || c.v === '')) continue;
 
-        const obj = { sr: 0, date: '', customer: '', product: '', quantity: 0,
+        const obj = { sr: 0, date: '', orderId: '', customer: '', product: '', quantity: 0,
                       expense: 0, salePrice: 0, profit: 0, transportCost: 0,
                       netProfit: 0, accumProfit: 0, status: '' };
 
@@ -1928,63 +2032,38 @@
     /* ==========================================================================
        SLICERS (Filter Mechanics)
        ========================================================================== */
+    function populateSelect(selectId, values, allText = "All") {
+      const select = document.getElementById(selectId);
+      if (!select) return;
+      const prevValue = select.value;
+      select.innerHTML = `<option value="">${allText}</option>` + values.map(v => `<option value="${v}">${v}</option>`).join('');
+      if (values.includes(prevValue)) {
+        select.value = prevValue;
+      }
+    }
+
     function populateFilterDropdowns(data) {
-      const regionSelect = document.getElementById("regionFilter");
-      const productSelect = document.getElementById("productFilter");
-      const statusSelect = document.getElementById("statusFilter");
-
-      const prevRegion = regionSelect.value;
-      const prevProduct = productSelect.value;
-      const prevStatus = statusSelect.value;
-
       const regions = [...new Set(data.map(o => o.region))].filter(Boolean).sort();
       const products = [...new Set(data.map(o => o.product))].filter(Boolean).sort();
       const statuses = [...new Set(data.map(o => o.status))].filter(Boolean).sort();
 
-      regionSelect.innerHTML = '<option value="">All Regions</option>' + regions.map(r => `<option value="${r}">${r}</option>`).join('');
-      productSelect.innerHTML = '<option value="">All Products</option>' + products.map(p => `<option value="${p}">${p}</option>`).join('');
-      statusSelect.innerHTML = '<option value="">All Statuses</option>' + statuses.map(s => `<option value="${s}">${s}</option>`).join('');
+      // Overview tab dropdowns
+      populateSelect("overviewRegionFilter", regions, "All Regions");
+      populateSelect("overviewProductFilter", products, "All Products");
+      populateSelect("overviewStatusFilter", statuses, "All Statuses");
 
-      if (regions.includes(prevRegion)) regionSelect.value = prevRegion;
-      if (products.includes(prevProduct)) productSelect.value = prevProduct;
-      if (statuses.includes(prevStatus)) statusSelect.value = prevStatus;
-    }
+      // Expense tab dropdowns
+      populateSelect("expenseRegionFilter", regions, "All Regions");
+      populateSelect("expenseProductFilter", products, "All Products");
+      populateSelect("expenseStatusFilter", statuses, "All Statuses");
 
-    function applyFilters() {
-      const regionValue = document.getElementById("regionFilter").value;
-      const productValue = document.getElementById("productFilter").value;
-      const statusValue = document.getElementById("statusFilter").value;
-      const cohortValue = document.getElementById("cohortFilter").value;
+      // Stock tab dropdowns
+      populateSelect("stockProductFilter", products, "All Products");
+      const vendors = [...new Set(stockSheetData.map(s => s.vendor || "Lal Mirch Traders").concat(Object.values(VENDORS)))].filter(Boolean).sort();
+      populateSelect("stockVendorFilter", vendors, "All Vendors");
 
-      // Count repeat orders per customer first
-      const customerOrderCounts = {};
-      const seen = new Set();
-      rawData.forEach(o => {
-        if (seen.has(o.orderId)) return;
-        seen.add(o.orderId);
-        const name = getCustomerName(o);
-        customerOrderCounts[name] = (customerOrderCounts[name] || 0) + 1;
-      });
-
-      filteredData = rawData.filter(o => {
-        const matchRegion = !regionValue || o.region === regionValue;
-        const matchProduct = !productValue || o.product === productValue;
-        const matchStatus = !statusValue || o.status === statusValue;
-        
-        let matchCohort = true;
-        if (cohortValue) {
-          const name = getCustomerName(o);
-          const count = customerOrderCounts[name] || 0;
-          if (cohortValue === "repeat") {
-            matchCohort = count >= 2;
-          } else if (cohortValue === "onetime") {
-            matchCohort = count === 1;
-          }
-        }
-        return matchRegion && matchProduct && matchStatus && matchCohort;
-      });
-
-      renderAll();
+      // Follow-up tab dropdowns
+      populateSelect("followupRegionFilter", regions, "All Regions");
     }
 
 
@@ -2006,12 +2085,47 @@
     let sortDir = -1;
 
     function renderOverviewTab() {
+      const regionValue = document.getElementById("overviewRegionFilter").value;
+      const productValue = document.getElementById("overviewProductFilter").value;
+      const statusValue = document.getElementById("overviewStatusFilter").value;
+      const cohortValue = document.getElementById("overviewCohortFilter").value;
+      const activePeriodBtn = document.querySelector("#overviewDateSlicer button.active");
+      const currentPeriod = activePeriodBtn ? activePeriodBtn.dataset.period : "day";
+
+      // Count repeat orders per customer first
+      const customerOrderCounts = {};
+      const seen = new Set();
+      rawData.forEach(o => {
+        if (seen.has(o.orderId)) return;
+        seen.add(o.orderId);
+        const name = getCustomerName(o);
+        customerOrderCounts[name] = (customerOrderCounts[name] || 0) + 1;
+      });
+
+      const overviewFilteredData = rawData.filter(o => {
+        const matchRegion = !regionValue || o.region === regionValue;
+        const matchProduct = !productValue || o.product === productValue;
+        const matchStatus = !statusValue || o.status === statusValue;
+        
+        let matchCohort = true;
+        if (cohortValue) {
+          const name = getCustomerName(o);
+          const count = customerOrderCounts[name] || 0;
+          if (cohortValue === "repeat") {
+            matchCohort = count >= 2;
+          } else if (cohortValue === "onetime") {
+            matchCohort = count === 1;
+          }
+        }
+        return matchRegion && matchProduct && matchStatus && matchCohort;
+      });
+
       // 1. Overview metrics calculations
-      const totalSales = filteredData.reduce((sum, o) => sum + o.revenue, 0);
-      const totalExpenses = filteredData.reduce((sum, o) => sum + o.expenses, 0);
+      const totalSales = overviewFilteredData.reduce((sum, o) => sum + o.revenue, 0);
+      const totalExpenses = overviewFilteredData.reduce((sum, o) => sum + o.expenses, 0);
       const totalNetRevenue = totalSales - totalExpenses;
       
-      const totalKgs = filteredData.reduce((sum, o) => {
+      const totalKgs = overviewFilteredData.reduce((sum, o) => {
         const match = (o.pack || '').match(/^(\d+(?:\.\d+)?)\s*(g|kg|kgs)?$/i);
         if (!match) return sum + o.units; // fallback
         const num = parseFloat(match[1]);
@@ -2020,17 +2134,17 @@
         return sum + kgs;
       }, 0);
       
-      const ratingRows = filteredData.filter(o => typeof o.rating === 'number' && !isNaN(o.rating));
+      const ratingRows = overviewFilteredData.filter(o => typeof o.rating === 'number' && !isNaN(o.rating));
       const avgRating = ratingRows.length ? ratingRows.reduce((sum, o) => sum + o.rating, 0) / ratingRows.length : 0;
 
-      const receivables = filteredData.filter(o => o.status && o.status.toLowerCase() === 'receivable').reduce((sum, o) => sum + o.revenue, 0);
-      const unpaidCount = filteredData.filter(o => o.status && o.status.toLowerCase() === 'receivable').length;
+      const receivables = overviewFilteredData.filter(o => o.status && o.status.toLowerCase() === 'receivable').reduce((sum, o) => sum + o.revenue, 0);
+      const unpaidCount = overviewFilteredData.filter(o => o.status && o.status.toLowerCase() === 'receivable').length;
       const marginPct = totalSales > 0 ? ((totalNetRevenue / totalSales) * 100).toFixed(1) : 0;
 
       const overviewKpiData = [
-        { id: "kpi-sales", label: "Total Sales", value: fmtPKR(totalSales), footer: `${filteredData.length} Orders`, statusClass: "neutral" },
+        { id: "kpi-sales", label: "Total Sales", value: fmtPKR(totalSales), footer: `${overviewFilteredData.length} Orders`, statusClass: "neutral" },
         { id: "kpi-revenue", label: "Net Revenue", value: fmtPKR(totalNetRevenue), footer: `${marginPct}% margin`, statusClass: totalNetRevenue > 0 ? "good" : "warn" },
-        { id: "kpi-units", label: "Total Weight Sold", value: fmtNum(totalKgs) + " <small>Kgs</small>", footer: `${new Set(filteredData.map(o => o.product)).size} Products`, statusClass: "neutral" },
+        { id: "kpi-units", label: "Total Weight Sold", value: fmtNum(totalKgs * 1000) + " <small>g</small>", footer: `Equivalent to ${totalKgs.toFixed(2)} Kgs`, statusClass: "neutral" },
         { id: "kpi-rating", label: "Avg. Rating", value: avgRating > 0 ? avgRating.toFixed(2) + " <small>/ 5</small>" : "N/A", footer: avgRating >= 4.2 ? "High satisfaction" : "Needs audit", statusClass: avgRating >= 4.2 ? "good" : "warn" },
         { id: "kpi-pending", label: "Pending Receivables", value: fmtPKR(receivables), footer: `${unpaidCount} unpaid orders`, statusClass: unpaidCount > 0 ? "warn" : "good" }
       ];
@@ -2047,7 +2161,7 @@
       // Chart 1: Net Revenue line chart
       const byPeriod = {};
       const periodSortKeys = {};
-      filteredData.forEach(o => {
+      overviewFilteredData.forEach(o => {
         if (o.date) {
           const pKey = getDatePeriodKey(o.date, currentPeriod);
           byPeriod[pKey] = (byPeriod[pKey] || 0) + o.netRevenue;
@@ -2081,7 +2195,7 @@
 
       // Chart 2: Product Bar Chart
       const byProduct = {};
-      filteredData.forEach(o => {
+      overviewFilteredData.forEach(o => {
         if (o.product) {
           const match = (o.pack || '').match(/^(\d+(?:\.\d+)?)\s*(g|kg|kgs)?$/i);
           let kgs = o.units;
@@ -2118,7 +2232,7 @@
       // Chart 3: Sales & Expenses bar chart
       const salesByProduct = {};
       const expensesByProduct = {};
-      filteredData.forEach(o => {
+      overviewFilteredData.forEach(o => {
         if (o.product) {
           salesByProduct[o.product] = (salesByProduct[o.product] || 0) + o.revenue;
           expensesByProduct[o.product] = (expensesByProduct[o.product] || 0) + o.expenses;
@@ -2148,7 +2262,7 @@
 
       // Chart 4: Payment status Share
       const byStatus = {};
-      filteredData.forEach(o => { if (o.status) byStatus[o.status] = (byStatus[o.status] || 0) + o.revenue; });
+      overviewFilteredData.forEach(o => { if (o.status) byStatus[o.status] = (byStatus[o.status] || 0) + o.revenue; });
       const statusesList = Object.keys(byStatus);
 
       makeChart("paymentChart", {
@@ -2180,19 +2294,21 @@
       });
 
       // 3. Raw order table
-      renderOverviewTable();
+      renderOverviewTable(overviewFilteredData);
     }
 
-    function renderOverviewTable() {
+    let lastOverviewFiltered = [];
+    function renderOverviewTable(filteredList) {
+      if (filteredList) lastOverviewFiltered = filteredList;
       const searchVal = document.getElementById("searchInput").value.toLowerCase();
 
-      let displayRows = filteredData.filter(o => {
+      let displayRows = lastOverviewFiltered.filter(o => {
         return !searchVal || 
                o.orderId.toLowerCase().includes(searchVal) ||
                o.product.toLowerCase().includes(searchVal) ||
                o.feedback.toLowerCase().includes(searchVal) ||
                o.region.toLowerCase().includes(searchVal) ||
-               o.pack.toLowerCase().includes(searchVal);
+               (o.pack && String(o.pack).toLowerCase().includes(searchVal));
       });
 
       displayRows.sort((a, b) => {
@@ -2212,7 +2328,7 @@
           <td>${o.region}</td>
           <td>${o.product}</td>
           <td>${o.pack}</td>
-          <td class="num-align">${fmtNum(o.units)}</td>
+          <td class="num-align">${fmtNum(o.units * (parseFloat(String(o.pack)) || 0))} g</td>
           <td class="num-align"><strong>${fmtPKR(o.revenue)}</strong></td>
           <td class="num-align" style="color: var(--pbi-red);">${fmtPKR(o.expenses)}</td>
           <td class="num-align" style="color: var(--pbi-green); font-weight: 600;">${fmtPKR(o.netRevenue)}</td>
@@ -2225,12 +2341,9 @@
       `).join("");
 
       // Calculate totals for raw ledger footers
-      const sumKgs = displayRows.reduce((s, o) => {
-        const match = (o.pack || '').match(/^(\d+(?:\.\d+)?)\s*(g|kg|kgs)?$/i);
-        if (!match) return s + o.units; // fallback
-        const num = parseFloat(match[1]);
-        const unit = (match[2] || 'g').toLowerCase();
-        return s + (unit === 'g' ? (num * o.units) / 1000 : num * o.units);
+      const sumGrams = displayRows.reduce((s, o) => {
+        const packSize = parseFloat(String(o.pack)) || 0;
+        return s + (o.units * packSize);
       }, 0);
       const sumRevenue = displayRows.reduce((s, o) => s + o.revenue, 0);
       const sumExpenses = displayRows.reduce((s, o) => s + o.expenses, 0);
@@ -2241,7 +2354,7 @@
       document.getElementById("tableFoot").innerHTML = `
         <tr>
           <td colspan="5" style="text-transform: uppercase; font-size: 11px; letter-spacing: 0.5px;">Totals / Averages</td>
-          <td class="num-align">${fmtNum(sumKgs)} Kgs</td>
+          <td class="num-align">${fmtNum(sumGrams)} g</td>
           <td class="num-align">${fmtPKR(sumRevenue)}</td>
           <td class="num-align" style="color: var(--pbi-red);">${fmtPKR(sumExpenses)}</td>
           <td class="num-align" style="color: var(--pbi-green);">${fmtPKR(sumNetRev)}</td>
@@ -2264,7 +2377,14 @@
        RENDER — TAB 2: EXPENSE VS PROFIT
        ========================================================================== */
     function renderExpenseTab() {
+      const regionValue = document.getElementById("expenseRegionFilter").value;
+      const productValue = document.getElementById("expenseProductFilter").value;
+      const statusValue = document.getElementById("expenseStatusFilter").value;
+      const transportValue = document.getElementById("expenseTransportFilter").value;
       const search = document.getElementById("expenseSearch").value.toLowerCase();
+      const activePeriodBtn = document.querySelector("#expenseDateSlicer button.active");
+      const currentPeriod = activePeriodBtn ? activePeriodBtn.dataset.period : "day";
+
       const seen = new Set();
       const expenseRows = [];
       let accumProfit = 0;
@@ -2272,10 +2392,16 @@
       if (expenseSheetData && expenseSheetData.length > 0) {
         expenseSheetData.forEach((row, idx) => {
           accumProfit += row.netProfit;
+          // Find region from operations sheet by matching orderId
+          const order = rawData.find(o => o.orderId === row.orderId);
+          const region = order ? order.region : "";
+
           expenseRows.push({
             sr: row.sr || (idx + 1),
             date: row.date,
+            orderId: row.orderId,
             customer: row.customer,
+            region: region || "Punjab",
             product: row.product,
             quantity: row.quantity,
             expense: row.expense,
@@ -2288,7 +2414,7 @@
           });
         });
       } else {
-        const sorted = [...filteredData].sort((a,b) => a.date.localeCompare(b.date));
+        const sorted = [...rawData].sort((a,b) => a.date.localeCompare(b.date));
 
         sorted.forEach((o) => {
           if (seen.has(o.orderId)) return;
@@ -2301,30 +2427,52 @@
           accumProfit += netProfit;
 
           expenseRows.push({
-            sr: expenseRows.length + 1, date: o.date, customer: getCustomerName(o), product: o.product,
-            quantity: o.units, expense: o.expenses, salePrice: o.revenue, profit: profit,
+            sr: expenseRows.length + 1, date: o.date, orderId: o.orderId, customer: getCustomerName(o), product: o.product,
+            region: o.region, quantity: o.units, expense: o.expenses, salePrice: o.revenue, profit: profit,
             transportCost: transportCost, netProfit: netProfit, accumProfit: accumProfit, status: o.status
           });
         });
       }
 
+      // Dynamically populate transport cost percentage options based on actual values in expenseRows
+      const transportSelect = document.getElementById("expenseTransportFilter");
+      if (transportSelect) {
+        const uniquePcts = [...new Set(expenseRows.map(r => r.salePrice > 0 ? Math.round((r.transportCost / r.salePrice) * 100) : 0))].filter(n => n > 0).sort((a,b)=>a-b);
+        const prevVal = transportSelect.value;
+        transportSelect.innerHTML = '<option value="">All Transport Costs</option>' + uniquePcts.map(p => `<option value="${p}">${p}% Transport Cost</option>`).join('');
+        if (uniquePcts.map(String).includes(prevVal)) {
+          transportSelect.value = prevVal;
+        }
+      }
+
+      // Apply filters
       const filtered = expenseRows.filter(r => {
-        if (!search) return true;
-        return r.customer.toLowerCase().includes(search) || r.product.toLowerCase().includes(search) || r.date.includes(search);
+        // Search filter
+        const matchSearch = !search || r.customer.toLowerCase().includes(search) || r.product.toLowerCase().includes(search) || r.date.includes(search);
+        
+        // Slicers
+        const matchRegion = !regionValue || r.region === regionValue;
+        const matchProduct = !productValue || r.product === productValue;
+        const matchStatus = !statusValue || r.status.toLowerCase() === statusValue.toLowerCase();
+        
+        const pct = r.salePrice > 0 ? Math.round((r.transportCost / r.salePrice) * 100) : 0;
+        const matchTransport = !transportValue || pct === parseInt(transportValue);
+
+        return matchSearch && matchRegion && matchProduct && matchStatus && matchTransport;
       });
 
-      const totalSale = expenseRows.reduce((s,r) => s + r.salePrice, 0);
-      const totalExp = expenseRows.reduce((s,r) => s + r.expense, 0);
-      const totalTransport = expenseRows.reduce((s,r) => s + r.transportCost, 0);
-      const totalNetProfit = expenseRows.reduce((s,r) => s + r.netProfit, 0);
-      const paidCount = expenseRows.filter(r => r.status.toLowerCase() === 'paid').length;
+      const totalSale = filtered.reduce((s,r) => s + r.salePrice, 0);
+      const totalExp = filtered.reduce((s,r) => s + r.expense, 0);
+      const totalTransport = filtered.reduce((s,r) => s + r.transportCost, 0);
+      const totalNetProfit = filtered.reduce((s,r) => s + r.netProfit, 0);
+      const paidCount = filtered.filter(r => r.status.toLowerCase() === 'paid').length;
 
       document.getElementById("expenseKpis").innerHTML = [
-        { label: "Total Sales", value: fmtPKR(totalSale), footer: `${expenseRows.length} transactions`, cls: "border-purple", fCls: "neutral" },
+        { label: "Total Sales", value: fmtPKR(totalSale), footer: `${filtered.length} transactions`, cls: "border-purple", fCls: "neutral" },
         { label: "Total Expenses", value: fmtPKR(totalExp), footer: `${totalSale > 0 ? ((totalExp/totalSale)*100).toFixed(1) : 0}% of sales`, cls: "border-red", fCls: "warn" },
         { label: "Transport Costs", value: fmtPKR(totalTransport), footer: "Across filtered regions", cls: "border-orange", fCls: "neutral" },
         { label: "Net Profit", value: fmtPKR(totalNetProfit), footer: `${totalSale > 0 ? ((totalNetProfit/totalSale)*100).toFixed(1) : 0}% margin`, cls: "border-green", fCls: "good" },
-        { label: "Payment Received", value: `${paidCount} <small>/ ${expenseRows.length}</small>`, footer: `${expenseRows.length - paidCount} pending`, cls: "border-blue", fCls: paidCount < expenseRows.length ? "warn" : "good" }
+        { label: "Payment Received", value: `${paidCount} <small>/ ${filtered.length}</small>`, footer: `${filtered.length - paidCount} pending`, cls: "border-blue", fCls: paidCount < filtered.length ? "warn" : "good" }
       ].map(k => `
         <div class="kpi-card ${k.cls}">
           <div class="kpi-title">${k.label}</div>
@@ -2344,7 +2492,7 @@
           <td class="num-align" style="color:var(--pbi-red);">${fmtPKR(r.expense)}</td>
           <td class="num-align">${fmtPKR(r.salePrice)}</td>
           <td class="num-align" style="color:var(--pbi-green);">${fmtPKR(r.profit)}</td>
-          <td class="num-align" style="color:var(--pbi-orange);">${fmtPKR(r.transportCost)}</td>
+          <td class="num-align" style="color:var(--pbi-orange);">${fmtPKR(r.transportCost)} <small style="opacity: 0.7; font-size: 10px;">(${r.salePrice > 0 ? ((r.transportCost / r.salePrice) * 100).toFixed(1) + "%" : "0%"})</small></td>
           <td class="num-align" style="font-weight:700;color:${r.netProfit >= 0 ? 'var(--pbi-green)' : 'var(--pbi-red)'};">${fmtPKR(r.netProfit)}</td>
           <td class="num-align" style="font-weight:700;">${fmtPKR(r.accumProfit)}</td>
           <td><span class="badge ${r.status.toLowerCase() === 'paid' ? 'paid' : 'not-paid'}">${r.status}</span></td>
@@ -2376,8 +2524,16 @@
       const profitByDate = {};
       const accumByDate = {};
       let runningAccum = 0;
-      expenseRows.forEach(r => { profitByDate[r.date] = (profitByDate[r.date] || 0) + r.netProfit; });
-      const profitDates = Object.keys(profitByDate).sort();
+      
+      const periodSortKeys = {};
+      filtered.forEach(r => {
+        if (r.date) {
+          const pKey = getDatePeriodKey(r.date, currentPeriod);
+          profitByDate[pKey] = (profitByDate[pKey] || 0) + r.netProfit;
+          periodSortKeys[pKey] = getPeriodSortKey(r.date, currentPeriod);
+        }
+      });
+      const profitDates = Object.keys(profitByDate).sort((a,b) => (periodSortKeys[a] || a).localeCompare(periodSortKeys[b] || b));
       profitDates.forEach(d => { runningAccum += profitByDate[d]; accumByDate[d] = runningAccum; });
 
       makeChart("profitTrendChart", {
@@ -2426,6 +2582,9 @@
        RENDER — TAB 3: STOCK MANAGEMENT
        ========================================================================== */
     function renderStockTab() {
+      const productValue = document.getElementById("stockProductFilter").value;
+      const statusValue = document.getElementById("stockStatusFilter").value;
+      const vendorValue = document.getElementById("stockVendorFilter").value;
       const search = document.getElementById("stockSearch").value.toLowerCase();
       const productMap = {};
       const seen = new Set();
@@ -2452,7 +2611,7 @@
         });
       }
 
-      filteredData.forEach(o => {
+      rawData.forEach(o => {
         if (seen.has(o.orderId)) return;
         seen.add(o.orderId);
 
@@ -2495,24 +2654,37 @@
         p.profitMargin = p.outSalePrice - p.retailPrice - p.transportCharge;
         p.payStatus = p.totalCount > 0 ? (p.paidCount === p.totalCount ? "Paid" : "Not Paid") : "N/A";
         p.buyerNames = [...p.buyers].slice(0, 3).join(", ") + (p.buyers.size > 3 ? ` +${p.buyers.size - 3}` : "");
-        p.remarks.push(p.remainingQty < 20 ? "Low Stock" : "Adequate");
+        p.remarks = [p.remainingQty < 20 ? "Low Stock" : "Adequate"];
         return p;
       });
 
       const filtered = stockRows.filter(r => {
-        if (!search) return true;
-        return r.product.toLowerCase().includes(search) || r.vendor.toLowerCase().includes(search) || r.buyerNames.toLowerCase().includes(search);
+        // Search filter
+        const matchSearch = !search || r.product.toLowerCase().includes(search) || r.vendor.toLowerCase().includes(search) || r.buyerNames.toLowerCase().includes(search);
+        
+        // Slicers
+        const matchProduct = !productValue || r.product === productValue;
+        const matchVendor = !vendorValue || r.vendor === vendorValue;
+        
+        let matchStatus = true;
+        if (statusValue === "low") {
+          matchStatus = r.remainingQty < 20;
+        } else if (statusValue === "adequate") {
+          matchStatus = r.remainingQty >= 20;
+        }
+
+        return matchSearch && matchProduct && matchVendor && matchStatus;
       });
 
-      const totalIn = stockRows.reduce((s,r) => s + r.qtyIn, 0);
-      const totalOut = stockRows.reduce((s,r) => s + r.qtyOut, 0);
-      const totalRemaining = stockRows.reduce((s,r) => s + r.remainingQty, 0);
-      const totalMargin = stockRows.reduce((s,r) => s + r.profitMargin, 0);
+      const totalIn = filtered.reduce((s,r) => s + r.qtyIn, 0);
+      const totalOut = filtered.reduce((s,r) => s + r.qtyOut, 0);
+      const totalRemaining = filtered.reduce((s,r) => s + r.remainingQty, 0);
+      const totalMargin = filtered.reduce((s,r) => s + r.profitMargin, 0);
 
       document.getElementById("stockKpis").innerHTML = [
-        { label: "Total Stock In", value: fmtNum(totalIn) + " <small>Kgs</small>", footer: `${stockRows.length} categories`, cls: "border-green", fCls: "good" },
+        { label: "Total Stock In", value: fmtNum(totalIn) + " <small>Kgs</small>", footer: `${filtered.length} categories`, cls: "border-green", fCls: "good" },
         { label: "Total Stock Out", value: fmtNum(totalOut) + " <small>Kgs</small>", footer: `${totalIn > 0 ? ((totalOut/totalIn)*100).toFixed(0) : 0}% turnover`, cls: "border-orange", fCls: "neutral" },
-        { label: "Remaining Stock", value: fmtNum(totalRemaining) + " <small>Kgs</small>", footer: stockRows.filter(r => r.remainingQty < 20).length > 0 ? "Low stock alerts" : "All items adequate", cls: "border-blue", fCls: stockRows.some(r => r.remainingQty < 20) ? "warn" : "good" },
+        { label: "Remaining Stock", value: fmtNum(totalRemaining) + " <small>Kgs</small>", footer: filtered.filter(r => r.remainingQty < 20).length > 0 ? "Low stock alerts" : "All items adequate", cls: "border-blue", fCls: filtered.some(r => r.remainingQty < 20) ? "warn" : "good" },
         { label: "Total Profit Margin", value: fmtPKR(totalMargin), footer: "After expenses + freight", cls: "border-purple", fCls: "good" }
       ].map(k => `
         <div class="kpi-card ${k.cls}">
@@ -2568,14 +2740,14 @@
       `;
 
       // Charts
-      const productNames = stockRows.map(r => r.product);
+      const productNames = filtered.map(r => r.product);
       makeChart("stockInOutChart", {
         type: "bar",
         data: {
           labels: productNames,
           datasets: [
-            { label: "Stock In (Kgs)", data: stockRows.map(r => r.qtyIn), backgroundColor: "rgba(16,185,129,0.7)", borderRadius: 3, maxBarThickness: 40 },
-            { label: "Stock Out (Kgs)", data: stockRows.map(r => r.qtyOut), backgroundColor: "rgba(249,115,22,0.7)", borderRadius: 3, maxBarThickness: 40 }
+            { label: "Stock In (Kgs)", data: filtered.map(r => r.qtyIn), backgroundColor: "rgba(16,185,129,0.7)", borderRadius: 3, maxBarThickness: 40 },
+            { label: "Stock Out (Kgs)", data: filtered.map(r => r.qtyOut), backgroundColor: "rgba(249,115,22,0.7)", borderRadius: 3, maxBarThickness: 40 }
           ]
         },
         options: {
@@ -2592,7 +2764,7 @@
         type: "doughnut",
         data: {
           labels: productNames,
-          datasets: [{ data: stockRows.map(r => r.remainingQty), backgroundColor: productNames.map(p => PRODUCT_COLORS[p] || "#2563eb"), borderWidth: 1, borderColor: "rgba(0, 0, 0, 0.08)" }]
+          datasets: [{ data: filtered.map(r => r.remainingQty), backgroundColor: productNames.map(p => PRODUCT_COLORS[p] || "#2563eb"), borderWidth: 1, borderColor: "rgba(0, 0, 0, 0.08)" }]
         },
         options: {
           responsive: true, maintainAspectRatio: false,
@@ -2607,15 +2779,17 @@
        RENDER — TAB 4: CUSTOMER FOLLOW-UP
        ========================================================================== */
     function renderFollowupTab() {
-      const search = document.getElementById("followupSearch").value.toLowerCase();
+      const regionValue = document.getElementById("followupRegionFilter").value;
       const statusFilterVal = document.getElementById("followupStatusFilter").value;
+      const search = document.getElementById("followupSearch").value.toLowerCase();
       const today = new Date();
       let followupRows = [];
 
       if (followupSheetData && followupSheetData.length > 0) {
         followupRows = followupSheetData.map(c => {
           const lastDate = new Date(c.lastOrderDate);
-          const daysSince = !isNaN(lastDate.getTime()) ? Math.floor((today - lastDate) / (1000 * 60 * 60 * 24)) : (c.daysSince || 0);
+          const rawDays = !isNaN(lastDate.getTime()) ? Math.floor((today - lastDate) / (1000 * 60 * 60 * 24)) : (c.daysSince || 0);
+          const daysSince = Math.max(0, rawDays);
           let followupStatus, badgeClass;
 
           if (daysSince >= 15) {
@@ -2646,7 +2820,7 @@
       } else {
         const seen = new Set();
         const customerMap = {};
-        filteredData.forEach(o => {
+        rawData.forEach(o => {
           if (seen.has(o.orderId)) return;
           seen.add(o.orderId);
 
@@ -2670,7 +2844,8 @@
 
         followupRows = Object.values(customerMap).map(c => {
           const lastDate = new Date(c.lastOrderDate);
-          const daysSince = Math.floor((today - lastDate) / (1000 * 60 * 60 * 24));
+          const rawDays = Math.floor((today - lastDate) / (1000 * 60 * 60 * 24));
+          const daysSince = Math.max(0, rawDays);
           let followupStatus, badgeClass;
 
           if (daysSince >= 15) {
@@ -2704,16 +2879,19 @@
           matchStatus = r.daysSince < 10;
         }
 
-        return matchSearch && matchStatus;
+        // Region filter
+        const matchRegion = !regionValue || r.region === regionValue;
+
+        return matchSearch && matchStatus && matchRegion;
       });
 
-      const urgentCount = followupRows.filter(r => r.daysSince >= 15).length;
-      const warningCount = followupRows.filter(r => r.daysSince >= 10 && r.daysSince < 15).length;
-      const recentCount = followupRows.filter(r => r.daysSince < 10).length;
-      const avgDays = followupRows.length > 0 ? Math.round(followupRows.reduce((s,r) => s + r.daysSince, 0) / followupRows.length) : 0;
+      const urgentCount = filtered.filter(r => r.daysSince >= 15).length;
+      const warningCount = filtered.filter(r => r.daysSince >= 10 && r.daysSince < 15).length;
+      const recentCount = filtered.filter(r => r.daysSince < 10).length;
+      const avgDays = filtered.length > 0 ? Math.round(filtered.reduce((s,r) => s + r.daysSince, 0) / filtered.length) : 0;
 
       document.getElementById("followupKpis").innerHTML = [
-        { label: "Total Customers", value: `${followupRows.length}`, footer: `Across ${new Set(followupRows.map(r=>r.region)).size} regions`, cls: "border-blue", fCls: "neutral" },
+        { label: "Total Customers", value: `${filtered.length}`, footer: `Across ${new Set(filtered.map(r=>r.region)).size} regions`, cls: "border-blue", fCls: "neutral" },
         { label: "Call Now (15+ Days)", value: `${urgentCount} <small>contacts</small>`, footer: urgentCount > 0 ? "Immediate calls pending" : "All followed up", cls: "border-red", fCls: urgentCount > 0 ? "warn" : "good" },
         { label: "Due Soon (10-14 Days)", value: `${warningCount} <small>contacts</small>`, footer: "Prepare re-order offers", cls: "border-yellow", fCls: "neutral" },
         { label: "Recent Orders (<10 Days)", value: `${recentCount} <small>contacts</small>`, footer: "High satisfaction active", cls: "border-green", fCls: "good" },
@@ -2786,7 +2964,7 @@
       `;
 
       // Render Top Repeat Customers Leaderboard side-panel
-      const repeatCustomers = followupRows.filter(r => r.totalOrders >= 2);
+      const repeatCustomers = filtered.filter(r => r.totalOrders >= 2);
       repeatCustomers.sort((a,b) => b.totalOrders - a.totalOrders);
       const topRepeat = repeatCustomers.slice(0, 10);
       
@@ -2840,12 +3018,112 @@
 
 
     /* ==========================================================================
-       CHART CONFIG DEFAULTS
+       CHART CONFIG DEFAULTS & DATALABELS PLUGIN
        ========================================================================== */
     Chart.defaults.color = "#64748b";
     Chart.defaults.font.family = "'Inter', sans-serif";
     Chart.defaults.font.size = 11;
     Chart.defaults.borderColor = "rgba(0, 0, 0, 0.08)";
+
+    const customDatalabelsPlugin = {
+      id: 'customDatalabels',
+      afterDatasetsDraw(chart, args, options) {
+        const { ctx } = chart;
+        ctx.save();
+
+        chart.data.datasets.forEach((dataset, datasetIndex) => {
+          const meta = chart.getDatasetMeta(datasetIndex);
+          if (meta.hidden) return;
+
+          // Clutter prevention: hide labels on lines/bars if there are too many data points (e.g., > 15)
+          const dataCount = dataset.data.length;
+          const isPieOrDoughnut = chart.config.type === 'doughnut' || chart.config.type === 'pie';
+          if (!isPieOrDoughnut && dataCount > 15) {
+            return; // Skip drawing labels to prevent overlapping
+          }
+
+          meta.data.forEach((element, index) => {
+            const val = dataset.data[index];
+            if (val === undefined || val === null || val === 0) return;
+
+            let text = "";
+            let textColor = "#475569"; // slate-600
+            let font = "bold 9px 'Inter', sans-serif";
+            let textAlign = "center";
+            let textBaseline = "middle";
+            let x = 0;
+            let y = 0;
+
+            const canvasId = chart.canvas.id.toLowerCase();
+            const isCurrency = canvasId.includes("revenue") || canvasId.includes("profit") || canvasId.includes("sale") || canvasId.includes("expense") || canvasId.includes("price");
+
+            if (isPieOrDoughnut) {
+              const total = dataset.data.reduce((a, b) => a + b, 0);
+              const pct = total > 0 ? (val / total) * 100 : 0;
+              if (pct < 5) return; // Only draw labels on slices representing >= 5% to prevent overlapping
+              
+              text = pct.toFixed(0) + "%";
+              textColor = "#ffffff"; // high contrast white text
+              font = "bold 10px 'Inter', sans-serif";
+              
+              // Position at center of slice
+              const center = element.tooltipPosition();
+              x = center.x;
+              y = center.y;
+            } else {
+              // Format numeric values
+              if (typeof val === 'number') {
+                if (isCurrency) {
+                  text = val >= 1000 ? "₨" + Math.round(val/1000) + "k" : "₨" + Math.round(val);
+                } else {
+                  text = Math.round(val).toLocaleString("en-PK");
+                }
+              } else {
+                text = String(val);
+              }
+
+              if (chart.config.type === 'bar') {
+                const isHorizontal = chart.options.indexAxis === 'y';
+                if (isHorizontal) {
+                  x = element.x + 5; // Draw slightly outside the bar end
+                  y = element.y;
+                  textAlign = "left";
+                  textBaseline = "middle";
+                  // If it's very close to the edge, draw inside
+                  if (x > chart.chartArea.right - 25) {
+                    x = element.x - 5;
+                    textAlign = "right";
+                    textColor = "#ffffff";
+                  }
+                } else {
+                  x = element.x;
+                  y = element.y - 6; // slightly above the bar
+                  textAlign = "center";
+                  textBaseline = "bottom";
+                }
+              } else if (chart.config.type === 'line') {
+                x = element.x;
+                y = element.y - 8; // slightly above the line node
+                textAlign = "center";
+                textBaseline = "bottom";
+              } else {
+                const pos = element.tooltipPosition();
+                x = pos.x;
+                y = pos.y;
+              }
+            }
+
+            ctx.fillStyle = textColor;
+            ctx.font = font;
+            ctx.textAlign = textAlign;
+            ctx.textBaseline = textBaseline;
+            ctx.fillText(text, x, y);
+          });
+        });
+        ctx.restore();
+      }
+    };
+    Chart.register(customDatalabelsPlugin);
 
     function makeChart(id, config) {
       if (charts[id]) charts[id].destroy();
@@ -2924,32 +3202,75 @@
     /* ==========================================================================
        SEARCH BINDINGS & EVENT LISTENERS
        ========================================================================== */
-    const regionEl = document.getElementById("regionFilter");
-    if (regionEl) regionEl.addEventListener("change", applyFilters);
+    // Helper to bind click events for tab-specific date period button groups
+    function bindDateSlicers(slicerId, renderFunc) {
+      document.querySelectorAll(`#${slicerId} button`).forEach(btn => {
+        btn.addEventListener("click", () => {
+          document.querySelectorAll(`#${slicerId} button`).forEach(b => b.classList.remove("active"));
+          btn.classList.add("active");
+          renderFunc();
+        });
+      });
+    }
 
-    const productEl = document.getElementById("productFilter");
-    if (productEl) productEl.addEventListener("change", applyFilters);
+    bindDateSlicers("overviewDateSlicer", renderOverviewTab);
+    bindDateSlicers("expenseDateSlicer", renderExpenseTab);
+    bindDateSlicers("stockDateSlicer", renderStockTab);
 
-    const statusEl = document.getElementById("statusFilter");
-    if (statusEl) statusEl.addEventListener("change", applyFilters);
+    // Overview Tab Slicers
+    const overviewRegionEl = document.getElementById("overviewRegionFilter");
+    if (overviewRegionEl) overviewRegionEl.addEventListener("change", renderOverviewTab);
 
-    const cohortEl = document.getElementById("cohortFilter");
-    if (cohortEl) cohortEl.addEventListener("change", applyFilters);
+    const overviewProductEl = document.getElementById("overviewProductFilter");
+    if (overviewProductEl) overviewProductEl.addEventListener("change", renderOverviewTab);
+
+    const overviewStatusEl = document.getElementById("overviewStatusFilter");
+    if (overviewStatusEl) overviewStatusEl.addEventListener("change", renderOverviewTab);
+
+    const overviewCohortEl = document.getElementById("overviewCohortFilter");
+    if (overviewCohortEl) overviewCohortEl.addEventListener("change", renderOverviewTab);
 
     const searchInputEl = document.getElementById("searchInput");
-    if (searchInputEl) searchInputEl.addEventListener("input", renderOverviewTable);
+    if (searchInputEl) searchInputEl.addEventListener("input", renderOverviewTab);
+
+    // Expense Tab Slicers
+    const expenseRegionEl = document.getElementById("expenseRegionFilter");
+    if (expenseRegionEl) expenseRegionEl.addEventListener("change", renderExpenseTab);
+
+    const expenseProductEl = document.getElementById("expenseProductFilter");
+    if (expenseProductEl) expenseProductEl.addEventListener("change", renderExpenseTab);
+
+    const expenseTransportEl = document.getElementById("expenseTransportFilter");
+    if (expenseTransportEl) expenseTransportEl.addEventListener("change", renderExpenseTab);
+
+    const expenseStatusEl = document.getElementById("expenseStatusFilter");
+    if (expenseStatusEl) expenseStatusEl.addEventListener("change", renderExpenseTab);
 
     const expenseSearchEl = document.getElementById("expenseSearch");
     if (expenseSearchEl) expenseSearchEl.addEventListener("input", renderExpenseTab);
 
+    // Stock Tab Slicers
+    const stockProductEl = document.getElementById("stockProductFilter");
+    if (stockProductEl) stockProductEl.addEventListener("change", renderStockTab);
+
+    const stockStatusEl = document.getElementById("stockStatusFilter");
+    if (stockStatusEl) stockStatusEl.addEventListener("change", renderStockTab);
+
+    const stockVendorEl = document.getElementById("stockVendorFilter");
+    if (stockVendorEl) stockVendorEl.addEventListener("change", renderStockTab);
+
     const stockSearchEl = document.getElementById("stockSearch");
     if (stockSearchEl) stockSearchEl.addEventListener("input", renderStockTab);
 
-    const followupSearchEl = document.getElementById("followupSearch");
-    if (followupSearchEl) followupSearchEl.addEventListener("input", renderFollowupTab);
+    // Follow-up Tab Slicers
+    const followupRegionEl = document.getElementById("followupRegionFilter");
+    if (followupRegionEl) followupRegionEl.addEventListener("change", renderFollowupTab);
 
     const followupStatusFilterEl = document.getElementById("followupStatusFilter");
     if (followupStatusFilterEl) followupStatusFilterEl.addEventListener("change", renderFollowupTab);
+
+    const followupSearchEl = document.getElementById("followupSearch");
+    if (followupSearchEl) followupSearchEl.addEventListener("input", renderFollowupTab);
 
     // Overview Table column sorting triggers
     document.querySelectorAll("#panel-overview table thead th").forEach(th => {
@@ -2963,16 +3284,6 @@
           sortDir = 1;
         }
         renderOverviewTable();
-      });
-    });
-
-    // Date Period Slicer button toggles
-    document.querySelectorAll("#dateSlicer button").forEach(btn => {
-      btn.addEventListener("click", () => {
-        document.querySelectorAll("#dateSlicer button").forEach(b => b.classList.remove("active"));
-        btn.classList.add("active");
-        currentPeriod = btn.dataset.period;
-        renderOverviewTab();
       });
     });
 
@@ -2991,12 +3302,12 @@
     // Immediately parse initial dataset and render dashboard so UI is instant and never blank
     rawData = csvToObjects(FALLBACK_CSV);
     populateFilterDropdowns(rawData);
-    applyFilters();
+    renderAll();
 
     // Fetch latest live data from Google Sheets immediately
     fetchAllData();
-    // Poll every 15s to automatically sync all sheets in real-time
-    setInterval(fetchAllData, 15000);
+    // Poll to automatically sync all sheets in real-time
+    setInterval(fetchAllData, SYNC_INTERVAL_MS);
   </script>
 </body>
 </html>
